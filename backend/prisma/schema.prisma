@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  finances Finance[]
+}
+
+model Finance {
+  id                String            @id @default(cuid())
+  userId            String            @unique
+  monthlyIncome     Decimal           @default(0)
+  transactions      Transaction[]
+  categories        Category[]
+  recurringExpenses RecurringExpense[]
+  financialGoals FinancialGoal[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id          String            @id @default(cuid())
+  financeId    String
+  categoryId  String?
+
+  amount      Decimal
+  type        TransactionType
+  status      TransactionStatus @default(COMPLETED)
+  description String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  finance   Finance    @relation(fields: [financeId], references: [id])
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+}
+
+model Category {
+  id                String             @id @default(cuid())
+  financeId         String
+  name              String
+  createdAt         DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  finance           Finance            @relation(fields: [financeId], references: [id])
+  transactions      Transaction[]
+  recurringExpenses RecurringExpense[]
+
+  @@unique([financeId, name])
+}
+
+enum TransactionType {
+  DEPOSIT
+  EXPENSE
+  INCOME
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model RecurringExpense {
+  id             String   @id @default(cuid())
+  financeId      String
+  categoryId     String?
+  description    String?
+  amount         Decimal
+  dayOfMonth     Int
+  nextExecution  DateTime
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  finance  Finance   @relation(fields: [financeId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([financeId, active])
+  @@index([nextExecution])
+}
+
+model FinancialGoal {
+  id            String   @id @default(cuid())
+  financeId     String
+  name          String
+  targetAmount  Decimal
+  currentAmount Decimal  @default(0)
+  deadline      DateTime?
+  transactions FinancialGoalTransaction[]
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  finance Finance @relation(fields: [financeId], references: [id], onDelete: Cascade)
+}
+
+model FinancialGoalTransaction {
+  id        String   @id @default(uuid())
+  goalId    String
+  type      FinancialGoalTransactionType
+  amount    Decimal
+  createdAt DateTime @default(now())
+
+  goal FinancialGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+}
+
+enum FinancialGoalTransactionType {
+  DEPOSIT
+  WITHDRAW
+}

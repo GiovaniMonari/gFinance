@@ -1,16 +1,16 @@
 import {
   Controller,
   Get,
+  Query,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 
 import { FinancialReportsService } from './financial-reports.service';
-import { Query } from '@nestjs/common';
 import { FinancialReportQueryDto } from './dto/financial-report-query.dto';
-import express from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { Request as NestRequest } from '@nestjs/common';
+import express from 'express';
 
 type AuthenticatedRequest = Request & {
   user: {
@@ -24,9 +24,10 @@ export class FinancialReportsController {
     private readonly financialReportsService: FinancialReportsService,
   ) {}
 
-  @Get('pdf')
+  @UseGuards(JwtAuthGuard)
+    @Get('pdf')
     async generatePdf(
-    @NestRequest() req: AuthenticatedRequest,
+    @Req() req: AuthenticatedRequest,
     @Res() res: express.Response,
     @Query() query: FinancialReportQueryDto,
     ) {

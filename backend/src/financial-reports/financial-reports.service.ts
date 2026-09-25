@@ -207,6 +207,14 @@ export class FinancialReportsService {
 
     document.moveDown();
 
+    this.checkPageBreak(document, 150);
+
+    document.moveDown();
+
+    document.fontSize(16).text('Metas financeiras');
+
+    document.moveDown();
+
     goals.forEach((goal) => {
         this.checkPageBreak(document,130)
         const targetAmount = Number(goal.targetAmount);
@@ -236,10 +244,10 @@ export class FinancialReportsService {
         document
             .fontSize(11)
             .text(`Meta: ${goal.name}`)
-            .text(`Valor objetivo: R$ ${this.formatCurrency(targetAmount)}`)
-            .text(`Valor atual: R$ ${this.formatCurrency(currentAmount)}`)
+            .text(`Valor objetivo: ${this.formatCurrency(targetAmount)}`)
+            .text(`Valor atual: ${this.formatCurrency(currentAmount)}`)
             .text(`Progresso: ${progress.toFixed(2)}%`)
-            .text(`Valor restante: R$ ${this.formatCurrency(remaining)}`)
+            .text(`Valor restante: ${this.formatCurrency(remaining)}`)
             .text(
             `Prazo: ${
                 goal.deadline

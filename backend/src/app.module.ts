@@ -7,6 +7,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { QueueModule } from './queue/queue.module';
 import { RecurringExpensesModule } from './recurring-expenses/recurring-expenses.module';
 import { FinancialGoalsModule } from './financial-goals/financial-goals.module';
+import { FinancialReportsModule } from './financial-reports/financial-reports.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { FinancialGoalsModule } from './financial-goals/financial-goals.module';
     CategoriesModule,
     RecurringExpensesModule,
     QueueModule,
-    FinancialGoalsModule
+    FinancialGoalsModule,
+    FinancialReportsModule
   ],
 })
 export class AppModule {}

@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react'
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  BarChart2,
   Calendar,
   Check,
   ChevronLeft,
@@ -9,6 +10,7 @@ import {
   Copy,
   Download,
   Edit3,
+  FileText,
   FolderPlus,
   History,
   LogOut,
@@ -241,7 +243,7 @@ function Auth({ onSuccess }: { onSuccess: (token: string) => void }) {
   )
 }
 
-type ModalState = TransactionType | 'CATEGORIES' | 'MONTHLY_INCOME' | 'RECURRING_EXPENSES' | 'FINANCIAL_GOALS' | null
+type ModalState = TransactionType | 'CATEGORIES' | 'MONTHLY_INCOME' | 'RECURRING_EXPENSES' | 'FINANCIAL_GOALS' | 'REPORT' | null
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [finance, setfinance] = useState<finance | null>(null)
@@ -473,6 +475,16 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               </span>
               <ArrowUpRight className="action-arrow" size={17} />
             </button>
+            <button onClick={() => setModal('REPORT')}>
+              <span className="action-icon category-action" style={{ background: '#fce7f3', color: '#be185d' }}>
+                <FileText />
+              </span>
+              <span>
+                <strong>Relatório</strong>
+                <small>Exportar PDF</small>
+              </span>
+              <ArrowUpRight className="action-arrow" size={17} />
+            </button>
           </div>
         </section>
 
@@ -555,36 +567,46 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
         {(expensesByCategory.length > 0 || monthlySummary.length > 0) && (
           <section className="dashboard-analytics">
+            {/* ── Gráfico de Barras: Receitas × Despesas × Depósitos ── */}
+            <div className="analytics-card">
+              <h4>
+                <span>Visão Geral Financeira</span>
+                <BarChart2 size={16} />
+              </h4>
+              <BarChart
+                income={totalIncome + totalDeposits + monthlyIncome}
+                expenses={totalExpenses}
+                deposits={totalDeposits}
+              />
+            </div>
+
+            {/* ── Gráfico de Linha: Evolução Mensal ── */}
+            <div className="analytics-card">
+              <h4>
+                <span>Evolução Mensal</span>
+                <TrendingUp size={16} />
+              </h4>
+              {monthlySummary.length === 0 ? (
+                <div className="empty">Nenhum dado mensal registrado.</div>
+              ) : (
+                <LineChart data={monthlySummary} monthlyIncome={monthlyIncome} />
+              )}
+            </div>
+
+            {/* ── Gráfico Donut: Despesas por Categoria ── */}
             <div className="analytics-card">
               <h4>
                 <span>Despesas por Categoria</span>
                 <Tag size={16} />
               </h4>
               {expensesByCategory.length === 0 ? (
-                <div className="empty">Nenhuma despesa categorizada até o momento.</div>
+                <div className="empty">Nenhuma despesa categorizada.</div>
               ) : (
-                <div className="expense-category-list">
-                  {expensesByCategory.map((cat) => {
-                    const catTotal = Number(cat.total)
-                    const percentage = totalExpenses > 0 ? Math.round((catTotal / totalExpenses) * 100) : 0
-                    return (
-                      <div key={cat.categoryId} className="category-bar-item">
-                        <div className="category-bar-info">
-                          <strong>{cat.categoryName}</strong>
-                          <span>
-                            {money.format(catTotal)} ({percentage}%)
-                          </span>
-                        </div>
-                        <div className="progress-track">
-                          <div className="progress-fill" style={{ width: `${Math.min(percentage, 100)}%` }} />
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
+                <DonutChart data={expensesByCategory} total={totalExpenses} />
               )}
             </div>
 
+            {/* ── Resumo Mensal em tabela ── */}
             <div className="analytics-card">
               <h4>
                 <span>Resumo Mensal</span>
@@ -703,6 +725,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             refresh()
           }}
         />
+      )}
+
+      {modal === 'REPORT' && (
+        <ReportModal onClose={() => setModal(null)} />
       )}
     </main>
   )
@@ -1796,6 +1822,303 @@ function FinancialGoalsModal({
             })
           )}
         </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Chart: Bar ───────────────────────────────────────────────────────────────
+const CHART_COLORS = {
+  income: '#2fac77',
+  expenses: '#e04f5f',
+  deposits: '#6366f1',
+}
+
+function BarChart({ income, expenses, deposits }: { income: number; expenses: number; deposits: number }) {
+  const W = 320
+  const H = 140
+  const barW = 56
+  const gap = 24
+  const maxVal = Math.max(income, expenses, deposits, 1)
+
+  const bars = [
+    { label: 'Receitas', value: income, color: CHART_COLORS.income },
+    { label: 'Despesas', value: expenses, color: CHART_COLORS.expenses },
+    { label: 'Depósitos', value: deposits, color: CHART_COLORS.deposits },
+  ]
+
+  const totalW = bars.length * barW + (bars.length - 1) * gap
+  const startX = (W - totalW) / 2
+
+  return (
+    <div className="chart-container">
+      <svg viewBox={`0 0 ${W} ${H + 32}`} className="chart-svg" aria-label="Gráfico de barras financeiro">
+        {/* Grid lines */}
+        {[0.25, 0.5, 0.75, 1].map((pct) => (
+          <line
+            key={pct}
+            x1={0} y1={H * (1 - pct)}
+            x2={W} y2={H * (1 - pct)}
+            stroke="#e9ebf2" strokeWidth={1}
+          />
+        ))}
+        {bars.map((bar, i) => {
+          const x = startX + i * (barW + gap)
+          const barH = Math.max((bar.value / maxVal) * H, bar.value > 0 ? 4 : 0)
+          const y = H - barH
+          return (
+            <g key={bar.label}>
+              <rect
+                x={x} y={y}
+                width={barW} height={barH}
+                rx={6} fill={bar.color} opacity={0.88}
+                className="chart-bar"
+              >
+                <title>{bar.label}: {money.format(bar.value)}</title>
+              </rect>
+              {bar.value > 0 && (
+                <text x={x + barW / 2} y={y - 5} textAnchor="middle" fontSize={9} fill={bar.color} fontWeight={700}>
+                  {money.format(bar.value)}
+                </text>
+              )}
+              <text x={x + barW / 2} y={H + 16} textAnchor="middle" fontSize={10} fill="#7f879d">
+                {bar.label}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+      <div className="chart-legend">
+        {bars.map((b) => (
+          <span key={b.label} className="chart-legend-item">
+            <span className="legend-dot" style={{ background: b.color }} />
+            {b.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Chart: Line/Area ──────────────────────────────────────────────────────────
+function LineChart({ data, monthlyIncome }: { data: MonthlySummary[]; monthlyIncome: number }) {
+  const W = 320
+  const H = 130
+  const padding = { left: 36, right: 10, top: 14, bottom: 26 }
+  const innerW = W - padding.left - padding.right
+  const innerH = H - padding.top - padding.bottom
+
+  const months = data.slice(-6)
+  const incomeVals = months.map((m) => Number(m.income) + Number(m.deposits) + monthlyIncome)
+  const expenseVals = months.map((m) => Number(m.expenses))
+  const allVals = [...incomeVals, ...expenseVals]
+  const maxVal = Math.max(...allVals, 1)
+
+  const xPos = (i: number) => padding.left + (i / Math.max(months.length - 1, 1)) * innerW
+  const yPos = (v: number) => padding.top + (1 - v / maxVal) * innerH
+
+  const toPath = (vals: number[]) =>
+    vals.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xPos(i).toFixed(1)} ${yPos(v).toFixed(1)}`).join(' ')
+
+  const toArea = (vals: number[]) =>
+    `${toPath(vals)} L ${xPos(vals.length - 1).toFixed(1)} ${(padding.top + innerH).toFixed(1)} L ${padding.left} ${(padding.top + innerH).toFixed(1)} Z`
+
+  return (
+    <div className="chart-container">
+      <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" aria-label="Gráfico de evolução mensal">
+        <defs>
+          <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={CHART_COLORS.income} stopOpacity={0.28} />
+            <stop offset="100%" stopColor={CHART_COLORS.income} stopOpacity={0.01} />
+          </linearGradient>
+          <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={CHART_COLORS.expenses} stopOpacity={0.22} />
+            <stop offset="100%" stopColor={CHART_COLORS.expenses} stopOpacity={0.01} />
+          </linearGradient>
+        </defs>
+
+        {/* Grid */}
+        {[0, 0.5, 1].map((pct) => (
+          <line
+            key={pct}
+            x1={padding.left} y1={padding.top + pct * innerH}
+            x2={W - padding.right} y2={padding.top + pct * innerH}
+            stroke="#e9ebf2" strokeWidth={1}
+          />
+        ))}
+
+        {/* Areas */}
+        {months.length > 1 && (
+          <>
+            <path d={toArea(incomeVals)} fill="url(#incomeGrad)" />
+            <path d={toArea(expenseVals)} fill="url(#expenseGrad)" />
+          </>
+        )}
+
+        {/* Lines */}
+        {months.length > 1 && (
+          <>
+            <path d={toPath(incomeVals)} fill="none" stroke={CHART_COLORS.income} strokeWidth={2} strokeLinejoin="round" />
+            <path d={toPath(expenseVals)} fill="none" stroke={CHART_COLORS.expenses} strokeWidth={2} strokeLinejoin="round" />
+          </>
+        )}
+
+        {/* Dots + tooltip */}
+        {months.map((m, i) => (
+          <g key={m.month}>
+            <circle cx={xPos(i)} cy={yPos(incomeVals[i])} r={3.5} fill={CHART_COLORS.income} stroke="#fff" strokeWidth={1.5}>
+              <title>{formatMonth(m.month)} — Receitas: {money.format(incomeVals[i])}</title>
+            </circle>
+            <circle cx={xPos(i)} cy={yPos(expenseVals[i])} r={3.5} fill={CHART_COLORS.expenses} stroke="#fff" strokeWidth={1.5}>
+              <title>{formatMonth(m.month)} — Despesas: {money.format(expenseVals[i])}</title>
+            </circle>
+            {/* X labels */}
+            <text
+              x={xPos(i)} y={H - 4}
+              textAnchor="middle" fontSize={9} fill="#7f879d"
+            >
+              {formatMonth(m.month).split(' ')[0]}
+            </text>
+          </g>
+        ))}
+      </svg>
+      <div className="chart-legend">
+        <span className="chart-legend-item"><span className="legend-dot" style={{ background: CHART_COLORS.income }} />Receitas</span>
+        <span className="chart-legend-item"><span className="legend-dot" style={{ background: CHART_COLORS.expenses }} />Despesas</span>
+      </div>
+    </div>
+  )
+}
+
+// ── Chart: Donut ──────────────────────────────────────────────────────────────
+const DONUT_PALETTE = ['#6366f1', '#2fac77', '#e04f5f', '#f59e0b', '#06b6d4', '#8b5cf6', '#ec4899', '#10b981']
+
+function DonutChart({ data, total }: { data: ExpenseByCategory[]; total: number }) {
+  const R = 54
+  const CX = 80
+  const CY = 70
+  const strokeW = 22
+  const circumference = 2 * Math.PI * R
+
+  const slices: { cat: ExpenseByCategory; pct: number; offset: number; color: string }[] = []
+  let cumulative = 0
+  data.forEach((cat, i) => {
+    const pct = total > 0 ? Number(cat.total) / total : 0
+    slices.push({ cat, pct, offset: circumference * (1 - cumulative), color: DONUT_PALETTE[i % DONUT_PALETTE.length] })
+    cumulative += pct
+  })
+
+  return (
+    <div className="chart-container donut-layout">
+      <svg viewBox={`0 0 160 140`} className="chart-svg donut-svg" aria-label="Gráfico de despesas por categoria">
+        {/* Background circle */}
+        <circle cx={CX} cy={CY} r={R} fill="none" stroke="#f0f2f8" strokeWidth={strokeW} />
+        {slices.map((s) => (
+          <circle
+            key={s.cat.categoryId}
+            cx={CX} cy={CY} r={R}
+            fill="none"
+            stroke={s.color}
+            strokeWidth={strokeW}
+            strokeDasharray={`${circumference * s.pct} ${circumference * (1 - s.pct)}`}
+            strokeDashoffset={s.offset}
+            strokeLinecap="butt"
+            transform={`rotate(-90 ${CX} ${CY})`}
+            className="donut-slice"
+          >
+            <title>{s.cat.categoryName}: {money.format(Number(s.cat.total))} ({(s.pct * 100).toFixed(1)}%)</title>
+          </circle>
+        ))}
+        {/* Center label */}
+        <text x={CX} y={CY - 6} textAnchor="middle" fontSize={9} fill="#7f879d">Total</text>
+        <text x={CX} y={CY + 8} textAnchor="middle" fontSize={11} fill="#172039" fontWeight={700}>
+          {total >= 1000 ? `${(total / 1000).toFixed(1)}k` : money.format(total)}
+        </text>
+      </svg>
+      <div className="donut-legend">
+        {slices.map((s) => (
+          <div key={s.cat.categoryId} className="donut-legend-item">
+            <span className="legend-dot" style={{ background: s.color }} />
+            <span className="donut-legend-label">{s.cat.categoryName}</span>
+            <span className="donut-legend-pct">{(s.pct * 100).toFixed(0)}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Modal: Relatório PDF ──────────────────────────────────────────────────────
+function ReportModal({ onClose }: { onClose: () => void }) {
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
+
+  async function handleGenerate(e: FormEvent) {
+    e.preventDefault()
+    setError('')
+    setSuccess(false)
+    setLoading(true)
+    try {
+      await api.downloadFinancialReport(startDate || undefined, endDate || undefined)
+      setSuccess(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Não foi possível gerar o relatório.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="modal-backdrop" onMouseDown={onClose}>
+      <div className="modal" onMouseDown={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>×</button>
+        <p className="eyebrow">EXPORTAR DADOS</p>
+        <h2>Relatório em PDF</h2>
+        <p className="muted">Gere um relatório completo com resumo financeiro, transações, análise de categorias e metas.</p>
+
+        <form onSubmit={handleGenerate} style={{ marginTop: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <label>
+              Data inicial (opcional)
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </label>
+            <label>
+              Data final (opcional)
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </label>
+          </div>
+
+          <div className="report-info">
+            <FileText size={15} />
+            <span>
+              {startDate || endDate
+                ? `Período: ${startDate ? new Date(startDate + 'T12:00:00').toLocaleDateString('pt-BR') : 'início'} até ${endDate ? new Date(endDate + 'T12:00:00').toLocaleDateString('pt-BR') : 'hoje'}`
+                : 'Sem filtro de data: o relatório incluirá todas as transações.'}
+            </span>
+          </div>
+
+          {error && <div className="error">{error}</div>}
+          {success && (
+            <div className="toast" style={{ position: 'static', marginBottom: 12, justifyContent: 'center' }}>
+              <Check size={16} /> PDF gerado e baixado com sucesso!
+            </div>
+          )}
+
+          <button className="button primary full" disabled={loading}>
+            {loading ? 'Gerando PDF...' : 'Gerar e Baixar PDF'} <Download size={17} />
+          </button>
+        </form>
       </div>
     </div>
   )

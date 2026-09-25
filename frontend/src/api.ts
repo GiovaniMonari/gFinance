@@ -95,6 +95,30 @@ export type FinancialGoalTransaction = {
   createdAt: string
 }
 
+async function requestBlob(path: string, options: RequestInit = {}): Promise<Blob> {
+  const token = localStorage.getItem('gFinance_token')
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    },
+  })
+  if (!response.ok) {
+    const body = await response.text()
+    let message = 'Não foi possível gerar o relatório.'
+    try {
+      const parsed = JSON.parse(body) as { message?: string | string[] }
+      if (Array.isArray(parsed.message)) message = parsed.message.join(', ')
+      else if (parsed.message) message = parsed.message
+    } catch {
+      if (body) message = body
+    }
+    throw new Error(message)
+  }
+  return response.blob()
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('gFinance_token')
   const response = await fetch(`${API_URL}${path}`, {
@@ -239,4 +263,20 @@ export const api = {
 
   getGoalTransactions: (id: string) =>
     request<FinancialGoalTransaction[]>(`/financial-goals/${id}/transactions`),
+
+  downloadFinancialReport: async (startDate?: string, endDate?: string): Promise<void> => {
+    const params = new URLSearchParams()
+    if (startDate) params.set('startDate', startDate)
+    if (endDate) params.set('endDate', endDate)
+    const query = params.toString()
+    const blob = await requestBlob(`/financial-reports/pdf${query ? `?${query}` : ''}`)
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'relatorio-financeiro.pdf'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  },
 }

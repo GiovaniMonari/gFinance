@@ -1083,3 +1083,134 @@ input:focus, select:focus, textarea:focus {
 .pwa-banner-close:hover {
   color: #94a3b8;
 }
+
+/* ── Charts ──────────────────────────────────────────────────────────────── */
+.dashboard-analytics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 34px;
+}
+
+@media (max-width: 700px) {
+  .dashboard-analytics {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-container {
+  width: 100%;
+}
+
+.chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.chart-bar {
+  transition: opacity 0.15s;
+  cursor: default;
+}
+
+.chart-bar:hover {
+  opacity: 1 !important;
+}
+
+.donut-slice {
+  transition: opacity 0.15s;
+  cursor: default;
+}
+
+.donut-slice:hover {
+  opacity: 0.8;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #7f879d;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Donut chart layout */
+.donut-layout {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.donut-svg {
+  flex-shrink: 0;
+  width: 160px;
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+}
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  min-width: 0;
+}
+
+.donut-legend-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #172039;
+}
+
+.donut-legend-pct {
+  font-weight: 700;
+  color: #7f879d;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+/* ── Report Modal ────────────────────────────────────────────────────────── */
+.report-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  background: #f0f2f8;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #636b7e;
+  margin: 14px 0;
+  line-height: 1.5;
+}
+
+.report-info svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #be185d;
+}

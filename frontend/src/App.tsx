@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Copy,
+  Download,
   Edit3,
   FolderPlus,
   History,
@@ -22,6 +23,7 @@ import {
   TrendingDown,
   TrendingUp,
   WalletCards,
+  X,
 } from 'lucide-react'
 import {
   api,
@@ -53,22 +55,93 @@ function formatMonth(monthStr: string) {
   return `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`
 }
 
+// ── PWA install hook ──────────────────────────────────────────────────────────
+type DeferredPrompt = Event & { prompt: () => Promise<void> }
+
+function usePWAInstall() {
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true
+
+  const [deferredPrompt, setDeferredPrompt] = useState<DeferredPrompt | null>(null)
+  const [installed, setInstalled] = useState(isStandalone)
+
+  useEffect(() => {
+    const onBeforeInstall = (e: Event) => {
+      e.preventDefault()
+      setDeferredPrompt(e as DeferredPrompt)
+    }
+    const onInstalled = () => {
+      setInstalled(true)
+      setDeferredPrompt(null)
+    }
+    window.addEventListener('beforeinstallprompt', onBeforeInstall)
+    window.addEventListener('appinstalled', onInstalled)
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstall)
+      window.removeEventListener('appinstalled', onInstalled)
+    }
+  }, [])
+
+  const triggerInstall = async () => {
+    if (!deferredPrompt) return
+    await deferredPrompt.prompt()
+    setDeferredPrompt(null)
+  }
+
+  const showBanner = !!deferredPrompt && !installed
+  return { showBanner, triggerInstall }
+}
+
+function InstallBanner({ onInstall, onDismiss }: { onInstall: () => void; onDismiss: () => void }) {
+  return (
+    <div className="pwa-banner">
+      <span className="pwa-banner-icon">
+        <WalletCards size={18} />
+      </span>
+      <div className="pwa-banner-text">
+        <strong>Instale o gFinance</strong>
+        <small>Acesse rápido, sem o navegador</small>
+      </div>
+      <div className="pwa-banner-actions">
+        <button className="button primary pwa-banner-btn" onClick={onInstall}>
+          <Download size={14} /> Instalar
+        </button>
+        <button className="icon-button pwa-banner-close" onClick={onDismiss} title="Fechar">
+          <X size={15} />
+        </button>
+      </div>
+    </div>
+  )
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem('gFinance_token'))
-  return token ? (
-    <Dashboard
-      onLogout={() => {
-        localStorage.removeItem('gFinance_token')
-        setToken(null)
-      }}
-    />
-  ) : (
-    <Auth
-      onSuccess={(value) => {
-        localStorage.setItem('gFinance_token', value)
-        setToken(value)
-      }}
-    />
+  const { showBanner, triggerInstall } = usePWAInstall()
+  const [bannerDismissed, setBannerDismissed] = useState(false)
+
+  return (
+    <>
+      {showBanner && !bannerDismissed && (
+        <InstallBanner onInstall={triggerInstall} onDismiss={() => setBannerDismissed(true)} />
+      )}
+      {token ? (
+        <Dashboard
+          onLogout={() => {
+            localStorage.removeItem('gFinance_token')
+            setToken(null)
+          }}
+        />
+      ) : (
+        <Auth
+          onSuccess={(value) => {
+            localStorage.setItem('gFinance_token', value)
+            setToken(value)
+          }}
+        />
+      )}
+    </>
   )
 }
 

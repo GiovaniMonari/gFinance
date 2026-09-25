@@ -8,6 +8,8 @@ import { QueueModule } from './queue/queue.module';
 import { RecurringExpensesModule } from './recurring-expenses/recurring-expenses.module';
 import { FinancialGoalsModule } from './financial-goals/financial-goals.module';
 import { FinancialReportsModule } from './financial-reports/financial-reports.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -17,9 +19,11 @@ import { FinancialReportsModule } from './financial-reports/financial-reports.mo
     TransactionsModule,
     CategoriesModule,
     RecurringExpensesModule,
+    ScheduleModule.forRoot(),
     QueueModule,
     FinancialGoalsModule,
-    FinancialReportsModule
+    FinancialReportsModule,
+    EmailModule
   ],
 })
 export class AppModule {}

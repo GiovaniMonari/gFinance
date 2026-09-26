@@ -875,7 +875,8 @@ input:focus, select:focus, textarea:focus {
   flex: 1;
 }
 
-@media(max-width: 900px) {
+/* Ajuste intermediário para Tablets e Mobile grande */
+@media (max-width: 900px) {
   .balance-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -887,6 +888,14 @@ input:focus, select:focus, textarea:focus {
   }
   .dashboard-analytics {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Ajuste específico para Celulares (Mobile Portrait) */
+@media (max-width: 600px) {
+  .balance-grid,
+  .actions {
+    grid-template-columns: 1fr; /* Empilha tudo em 1 coluna */
   }
 }
 

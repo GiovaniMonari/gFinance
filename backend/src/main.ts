@@ -24,6 +24,19 @@ async function bootstrap() {
     }),
   );
 
+  const config = new DocumentBuilder()
+    .setTitle('gWallet API')
+    .setDescription(
+      'API para gerenciamento de finanças pessoais.',
+    )
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+
+  SwaggerModule.setup('swagger', app, document);
+
   await app.listen(process.env.PORT ?? 3000);
 }
 

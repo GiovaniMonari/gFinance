@@ -5,17 +5,20 @@ import {
   Request as NestRequest,
   UseGuards,
   Get,
-  ParseIntPipe,
-  DefaultValuePipe,
-  BadRequestException,
   Param,
+  Query,
 } from '@nestjs/common';
+
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import type { Request } from 'express';
-import { Query } from '@nestjs/common';
 import { PaginationDto } from './dto/paginaton.dto';
 
 type AuthenticatedRequest = Request & {
@@ -24,6 +27,8 @@ type AuthenticatedRequest = Request & {
   };
 };
 
+@ApiTags('Transactions')
+@ApiBearerAuth()
 @Controller('transactions')
 export class TransactionsController {
   constructor(
@@ -32,28 +37,40 @@ export class TransactionsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@NestRequest() req: AuthenticatedRequest, @Body() dto: CreateTransactionDto) {
+  @ApiOperation({
+    summary: 'Criar uma nova transação',
+  })
+  create(
+    @NestRequest() req: AuthenticatedRequest,
+    @Body() dto: CreateTransactionDto,
+  ) {
     return this.transactionsService.createTransaction(
       req.user.id,
       dto,
     );
   }
 
-@Get()
-@UseGuards(JwtAuthGuard)
-getTransactions(
-  @NestRequest() req: AuthenticatedRequest,
-  @Query() pagination: PaginationDto,
-) {
-  return this.transactionsService.getTransactionsByUserId(
-    req.user.id,
-    pagination.page,
-    pagination.limit,
-  );
-}
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Listar transações financeiras',
+  })
+  getTransactions(
+    @NestRequest() req: AuthenticatedRequest,
+    @Query() pagination: PaginationDto,
+  ) {
+    return this.transactionsService.getTransactionsByUserId(
+      req.user.id,
+      pagination.page,
+      pagination.limit,
+    );
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('summary')
+  @ApiOperation({
+    summary: 'Consultar resumo financeiro',
+  })
   getFinancialSummary(
     @NestRequest() req: AuthenticatedRequest,
   ) {
@@ -64,6 +81,9 @@ getTransactions(
 
   @UseGuards(JwtAuthGuard)
   @Get('expenses-by-category')
+  @ApiOperation({
+    summary: 'Consultar despesas por categoria',
+  })
   getExpensesByCategory(
     @NestRequest() req: AuthenticatedRequest,
   ) {
@@ -74,6 +94,9 @@ getTransactions(
 
   @UseGuards(JwtAuthGuard)
   @Get('monthly-summary')
+  @ApiOperation({
+    summary: 'Consultar resumo financeiro mensal',
+  })
   getMonthlySummary(
     @NestRequest() req: AuthenticatedRequest,
   ) {
@@ -84,6 +107,9 @@ getTransactions(
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Consultar uma transação por ID',
+  })
   getTransactionById(
     @NestRequest() req: AuthenticatedRequest,
     @Param('id') id: string,

@@ -1,60 +1,116 @@
-# 💰 gFinance
+# gWallet
 
-API backend para gerenciamento financeiro pessoal, desenvolvida com **NestJS, TypeScript, Prisma e PostgreSQL**.
+API backend para gerenciamento de finanças pessoais, desenvolvida com **NestJS, TypeScript, PostgreSQL e Prisma**.
 
-O gFinance permite que usuários controlem receitas, despesas, categorias, despesas recorrentes e metas financeiras, além de gerar relatórios financeiros em PDF e receber lembretes automáticos sobre contas próximas do vencimento.
+O gWallet permite que usuários registrem suas movimentações financeiras, organizem despesas por categorias, acompanhem despesas recorrentes, definam metas financeiras e gerem relatórios financeiros em PDF.
 
-O projeto foi desenvolvido com foco em **arquitetura modular, processamento assíncrono, organização de código e escalabilidade**.
+A aplicação também utiliza **Redis + BullMQ** para processamento assíncrono e possui um sistema de lembretes por e-mail para despesas recorrentes.
 
 ---
 
 ## 🚀 Funcionalidades
 
 ### 🔐 Autenticação
-- Cadastro de usuários
-- Login com JWT
-- Proteção de rotas
-- Isolamento dos dados financeiros por usuário
 
-### 💰 Gestão financeira
+- Cadastro de usuários
+- Login
+- Autenticação utilizando JWT
+- Proteção das rotas com Guards
+- Isolamento dos dados por usuário
+
+### 💰 Controle financeiro
+
+- Criação e gerenciamento de contas financeiras
+- Definição de renda mensal
 - Registro de receitas
 - Registro de despesas
 - Registro de depósitos
-- Categorias personalizadas
-- Controle de saldo
-- Status de transações
+- Consulta de transações
+- Paginação de transações
+- Resumo financeiro
+
+### 🏷️ Categorias
+
+- Criação de categorias
+- Listagem de categorias
+- Atualização de categorias
+- Exclusão de categorias
+- Associação de categorias às transações e despesas recorrentes
 
 ### 🔄 Despesas recorrentes
-- Cadastro de despesas recorrentes
-- Definição do dia de execução
-- Ativação/desativação
-- Controle da próxima execução
-- Lembretes automáticos por e-mail
+
+- Criação de despesas recorrentes
+- Definição do dia de vencimento
+- Atualização de despesas
+- Ativação e desativação
+- Exclusão
+- Processamento automático de lembretes
+
+O sistema verifica diariamente as despesas próximas do vencimento e agenda o envio de lembretes por e-mail.
 
 ### 🎯 Metas financeiras
+
 - Criação de metas
-- Definição de valor objetivo
-- Controle do valor acumulado
-- Depósitos e retiradas
-- Percentual de progresso
-- Valor restante
-- Prazo da meta
-- Identificação de metas concluídas e atrasadas
+- Definição de valor alvo
+- Definição de prazo
+- Acompanhamento do progresso
+- Adição de valores à meta
+- Remoção de valores
+- Histórico de movimentações
+- Cálculo de progresso e valor restante
+- Identificação do status da meta
 
 ### 📊 Relatórios financeiros
-- Geração de relatórios em PDF
-- Filtro por período
+
+- Geração de relatório financeiro em PDF
 - Resumo de receitas e despesas
 - Saldo do período
+- Depósitos realizados
 - Despesas agrupadas por categoria
-- Gráficos
+- Percentual de participação das categorias
 - Análise financeira
-- Informações sobre metas
+- Progresso das metas
+- Filtro por período
+
+Exemplo:
+
+```http
+GET /financial-reports/pdf?startDate=2026-09-01&endDate=2026-09-30
+```
 
 ### 📧 Notificações
-O sistema possui processamento assíncrono para envio de lembretes de despesas recorrentes.
 
-Quando uma despesa recorrente está próxima do vencimento, o sistema identifica a conta e agenda o envio de um e-mail de lembrete.
+O sistema utiliza **Resend** para envio de e-mails.
+
+Atualmente são utilizados para notificações de despesas recorrentes próximas do vencimento.
+
+### ⚙️ Processamento assíncrono
+
+O processamento de tarefas em background utiliza:
+
+- Redis
+- BullMQ
+- NestJS Schedule
+
+Fluxo simplificado:
+
+```text
+Scheduler
+    ↓
+Identifica despesas próximas do vencimento
+    ↓
+BullMQ
+    ↓
+Redis
+    ↓
+Worker / Processor
+    ↓
+EmailService
+    ↓
+Resend
+    ↓
+E-mail do usuário
+```
 
 ---
 
@@ -63,54 +119,38 @@ Quando uma despesa recorrente está próxima do vencimento, o sistema identifica
 O projeto utiliza uma arquitetura modular baseada no NestJS.
 
 ```text
-┌──────────────────────┐
-│       Client         │
-└──────────┬───────────┘
-           │ HTTP
-           ▼
-┌──────────────────────┐
-│      NestJS API      │
-├──────────────────────┤
-│ Auth                 │
-│ Finance              │
-│ Transactions         │
-│ Categories           │
-│ Recurring Expenses   │
-│ Financial Goals      │
-│ Financial Reports    │
-└──────────┬───────────┘
-           │
-     ┌─────┴─────┐
-     ▼           ▼
- PostgreSQL    Redis
-     │           │
-   Prisma      BullMQ
-                 │
-                 ▼
-            Background Jobs
-                 │
-                 ▼
-              Resend
-```
-
-### Processamento assíncrono
-
-O **BullMQ + Redis** é utilizado para executar tarefas em background, evitando que operações como envio de e-mails dependam diretamente do ciclo da requisição HTTP.
-
-Exemplo:
-
-```text
-Scheduler
-    ↓
-Identifica contas próximas do vencimento
-    ↓
-BullMQ
-    ↓
-Worker
-    ↓
-Email Service
-    ↓
-Resend
+                    ┌─────────────────┐
+                    │     Cliente     │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │    NestJS API   │
+                    └────────┬────────┘
+                             │
+          ┌──────────────────┼──────────────────┐
+          │                  │                  │
+          ▼                  ▼                  ▼
+      Auth/Auth          Financeiro         Relatórios
+          │                  │                  │
+          │                  ▼                  ▼
+          │              Prisma             PDFKit
+          │                  │
+          └──────────────┬───┘
+                         │
+                         ▼
+                   PostgreSQL
+                         
+                         │
+                         ▼
+                       Redis
+                         │
+                         ▼
+                      BullMQ
+                         │
+                         ▼
+                   Processamento
+                   assíncrono
 ```
 
 ---
@@ -119,33 +159,49 @@ Resend
 
 ### Backend
 
-- **Node.js**
-- **TypeScript**
-- **NestJS**
-- **Prisma**
-- **PostgreSQL**
-- **JWT**
-- **class-validator**
+- [NestJS](https://nestjs.com/)
+- TypeScript
+- Node.js
+
+### Banco de dados
+
+- PostgreSQL
+- Prisma ORM
+
+### Autenticação
+
+- JWT
+- Passport
+- Guards do NestJS
 
 ### Processamento assíncrono
 
-- **Redis**
-- **BullMQ**
-- **@nestjs/schedule**
+- Redis
+- BullMQ
+- `@nestjs/schedule`
 
-### Relatórios e comunicação
+### E-mail
 
-- **PDFKit**
-- **Resend**
+- Resend
 
-### Infraestrutura
+### Relatórios
 
-- **Railway**
-- **Docker** *(quando utilizado no ambiente de desenvolvimento/produção)*
+- PDFKit
+
+### Documentação
+
+- Swagger / OpenAPI
+- `@nestjs/swagger`
+
+### Deploy
+
+- Railway
 
 ---
 
 ## 📁 Estrutura do projeto
+
+A estrutura é organizada por módulos de domínio:
 
 ```text
 src/
@@ -153,33 +209,77 @@ src/
 ├── categories/
 ├── financial-goals/
 ├── financial-reports/
-├── prisma/
+├── finances/
 ├── recurring-expenses/
 ├── transactions/
 ├── email/
 ├── queue/
-├── finances/
-└── main.ts
+├── prisma/
+└── app.module.ts
 ```
 
-A estrutura pode variar conforme a evolução do projeto, mas os módulos são organizados por domínio para facilitar manutenção e evolução da aplicação.
+Cada módulo concentra suas próprias responsabilidades, como:
+
+- Controllers
+- Services
+- DTOs
+- Regras de negócio
+
+Essa organização facilita a manutenção e a evolução da aplicação.
 
 ---
 
-## ⚙️ Requisitos
+## 📚 Documentação da API
 
-Antes de executar o projeto, tenha instalado:
+A API possui documentação interativa utilizando **Swagger/OpenAPI**.
 
-- Node.js
-- npm
-- PostgreSQL
-- Redis
+Com a aplicação em execução, acesse:
+
+```text
+http://localhost:3000/swagger
+```
+
+A interface permite:
+
+- Visualizar todos os endpoints
+- Consultar parâmetros
+- Visualizar os DTOs
+- Testar requisições
+- Autenticar utilizando JWT
+- Consultar os diferentes módulos da API
+
+### Autenticação no Swagger
+
+1. Realize o login através de:
+
+```http
+POST /auth/login
+```
+
+2. Copie o `access_token`.
+
+3. Clique em **Authorize 🔒** no Swagger.
+
+4. Informe o token JWT.
+
+5. As rotas protegidas poderão ser executadas diretamente pela interface.
 
 ---
 
 ## 🔧 Configuração
 
-Clone o repositório:
+### Requisitos
+
+Antes de executar o projeto, certifique-se de possuir:
+
+- Node.js
+- PostgreSQL
+- Redis
+- npm
+
+### Instalação
+
+Clone o projeto:
 
 ```bash
 git clone <URL_DO_REPOSITORIO>
@@ -188,7 +288,7 @@ git clone <URL_DO_REPOSITORIO>
 Entre na pasta:
 
 ```bash
-cd gFinance/backend
+cd gwallet
 ```
 
 Instale as dependências:
@@ -197,43 +297,55 @@ Instale as dependências:
 npm install
 ```
 
-Crie um arquivo `.env`:
+---
+
+## 🔐 Variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto.
+
+Exemplo:
 
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 
-JWT_SECRET="sua-chave-secreta"
+JWT_SECRET="your-secret"
 
 REDIS_URL="redis://localhost:6379"
 
-RESEND_API_KEY="sua-api-key"
+RESEND_API_KEY="your-resend-api-key"
 ```
+
+> Nunca versione o arquivo `.env` contendo credenciais reais.
+
+Recomenda-se disponibilizar um `.env.example` no repositório.
 
 ---
 
 ## 🗄️ Banco de dados
 
-Execute as migrations:
+O projeto utiliza Prisma para gerenciamento do banco de dados.
 
-```bash
-npx prisma migrate deploy
-```
-
-Para desenvolvimento, quando necessário:
-
-```bash
-npx prisma migrate dev
-```
-
-Gere o Prisma Client:
+Após configurar o `DATABASE_URL`, execute:
 
 ```bash
 npx prisma generate
 ```
 
+Para aplicar as migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+Durante o desenvolvimento, novas migrations podem ser criadas com:
+
+```bash
+npx prisma migrate dev
+```
+
 ---
 
-## ▶️ Executando
+## ▶️ Executando o projeto
 
 ### Desenvolvimento
 
@@ -241,125 +353,201 @@ npx prisma generate
 npm run start:dev
 ```
 
-### Produção
+### Build
 
 ```bash
 npm run build
+```
+
+### Produção
+
+```bash
 npm run start:prod
 ```
 
----
+Após iniciar a aplicação, a API estará disponível na porta configurada pelo ambiente.
 
-## 🧪 Testes
-
-Executar os testes:
-
-```bash
-npm test
-```
-
-Modo watch:
-
-```bash
-npm run test:watch
-```
-
-Cobertura:
-
-```bash
-npm run test:cov
-```
-
----
-
-## 📄 Relatórios
-
-O sistema disponibiliza um endpoint para geração de relatório financeiro em PDF:
-
-```http
-GET /financial-reports/pdf
-```
-
-Também é possível filtrar por período:
-
-```http
-GET /financial-reports/pdf?startDate=2026-09-01&endDate=2026-09-30
-```
-
-O endpoint exige autenticação JWT.
-
----
-
-## 📧 Lembretes de despesas recorrentes
-
-O sistema verifica diariamente as despesas recorrentes próximas do vencimento.
-
-O fluxo utiliza:
+A documentação Swagger estará disponível em:
 
 ```text
-Cron Scheduler
-      ↓
-Prisma
-      ↓
-BullMQ
-      ↓
-Processor
-      ↓
-EmailService
-      ↓
-Resend
+/swagger
 ```
 
-O `jobId` é construído utilizando o identificador da despesa e a data de execução, evitando o processamento duplicado do mesmo lembrete.
+---
+
+## 🔄 Exemplo de fluxo
+
+Um exemplo do fluxo de uma despesa recorrente:
+
+```text
+Usuário
+   │
+   ▼
+Cria despesa recorrente
+   │
+   ▼
+PostgreSQL
+   │
+   ▼
+Scheduler verifica vencimentos
+   │
+   ▼
+Despesa vence em 2 dias?
+   │
+   ├── Não ──► Aguarda próxima execução
+   │
+   └── Sim
+        │
+        ▼
+      BullMQ
+        │
+        ▼
+      Redis
+        │
+        ▼
+    Processor
+        │
+        ▼
+    EmailService
+        │
+        ▼
+      Resend
+        │
+        ▼
+    E-mail enviado
+```
 
 ---
 
 ## 🔒 Segurança
 
-O gFinance utiliza:
+A API utiliza:
 
 - Autenticação baseada em JWT
-- Guards do NestJS
-- Validação de DTOs
-- Isolamento dos dados financeiros por usuário
+- Guards para proteção de endpoints
+- Validação de dados com `class-validator`
+- Prisma para acesso ao banco
+- Isolamento dos recursos por usuário
 - Variáveis de ambiente para informações sensíveis
 
-Segredos e credenciais não devem ser versionados no repositório.
+As operações financeiras são associadas ao usuário autenticado, evitando que um usuário acesse diretamente os dados financeiros de outro.
 
 ---
 
-## 📌 Próximos passos
+## 📌 Principais endpoints
 
-Possíveis evoluções do projeto:
+### Auth
 
-- Dashboard web
-- Comparação financeira entre períodos
-- Mais notificações e alertas
-- Testes automatizados de integração
-- Observabilidade e monitoramento
-- Melhorias de performance
-- Integração com serviços financeiros externos
+```http
+POST /auth/register
+POST /auth/login
+```
+
+### Finances
+
+```http
+POST /finances
+POST /finances/income
+POST /finances/transactions
+POST /finances/delete
+PATCH /finances/income
+POST /finances/get
+```
+
+### Transactions
+
+```http
+POST /transactions
+GET /transactions
+GET /transactions/summary
+GET /transactions/expenses-by-category
+GET /transactions/monthly-summary
+GET /transactions/:id
+```
+
+### Categories
+
+```http
+POST /categories
+GET /categories
+PATCH /categories/:id
+DELETE /categories/:id
+```
+
+### Recurring Expenses
+
+```http
+POST /recurring-expenses
+GET /recurring-expenses
+PATCH /recurring-expenses/:id
+DELETE /recurring-expenses/:id
+```
+
+### Financial Goals
+
+```http
+POST /financial-goals
+GET /financial-goals
+GET /financial-goals/:id
+PATCH /financial-goals/:id
+PATCH /financial-goals/:id/progress
+PATCH /financial-goals/:id/progress/remove
+GET /financial-goals/:id/transactions
+DELETE /financial-goals/:id
+```
+
+### Financial Reports
+
+```http
+GET /financial-reports/pdf
+```
+
+Filtros disponíveis:
+
+```text
+startDate
+endDate
+```
 
 ---
 
-## 👨‍💻 Sobre o projeto
+## 📈 Objetivo do projeto
 
-O gFinance foi desenvolvido como um projeto autoral com o objetivo de aplicar conceitos de desenvolvimento backend, arquitetura de software, processamento assíncrono e integração entre diferentes serviços.
+O gWallet foi desenvolvido como um projeto prático para aplicar conceitos de desenvolvimento backend, arquitetura de APIs e engenharia de software.
 
-O projeto também serve como laboratório para práticas relacionadas a:
+O projeto aborda conceitos como:
 
-- APIs REST
+- Desenvolvimento de APIs REST
 - Arquitetura modular
-- ORM
-- Filas e processamento assíncrono
-- Cache e mensageria
-- Autenticação
+- Autenticação e autorização
+- ORM e modelagem de banco de dados
+- Processamento assíncrono
+- Filas e jobs
+- Cache e infraestrutura com Redis
 - Geração de documentos
+- Agendamento de tarefas
 - Integração com serviços externos
-- Deploy em cloud
+- Documentação de APIs com OpenAPI
+- Deploy de aplicações backend
 
 ---
 
-## 📜 Licença
+## 🚀 Próximos passos
 
-Este projeto está sob a licença definida no repositório.
+O MVP atual está estruturado e funcional.
+
+Possíveis evoluções futuras incluem:
+
+- Evolução da infraestrutura
+
+---
+
+## 👨‍💻 Sobre
+
+Projeto desenvolvido com foco em **backend development, arquitetura de software e construção de APIs escaláveis** utilizando Node.js, TypeScript e NestJS.
+
+---
+
+## 📄 Licença
+
+Este projeto está disponível para fins de estudo e desenvolvimento pessoal.

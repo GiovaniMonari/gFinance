@@ -10,6 +10,12 @@ import {
   Delete,
 } from '@nestjs/common';
 
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -23,6 +29,8 @@ type AuthenticatedRequest = Request & {
   };
 };
 
+@ApiTags('Categories')
+@ApiBearerAuth()
 @Controller('categories')
 export class CategoriesController {
   constructor(
@@ -31,6 +39,9 @@ export class CategoriesController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @ApiOperation({
+    summary: 'Criar uma nova categoria',
+  })
   create(
     @NestRequest() req: AuthenticatedRequest,
     @Body() dto: CreateCategoryDto,
@@ -42,36 +53,47 @@ export class CategoriesController {
   }
 
   @UseGuards(JwtAuthGuard)
-@Get()
-getCategories(@NestRequest() req: AuthenticatedRequest) {
-  return this.categoriesService.getCategoriesByUserId(
-    req.user.id,
-  );
-}
+  @Get()
+  @ApiOperation({
+    summary: 'Listar categorias financeiras',
+  })
+  getCategories(
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    return this.categoriesService.getCategoriesByUserId(
+      req.user.id,
+    );
+  }
 
-@UseGuards(JwtAuthGuard)
-@Patch(':id')
-update(
-  @NestRequest() req: AuthenticatedRequest,
-  @Param('id') categoryId: string,
-  @Body() dto: UpdateCategoryDto,
-) {
-  return this.categoriesService.updateCategory(
-    req.user.id,
-    categoryId,
-    dto,
-  );
-}
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  @ApiOperation({
+    summary: 'Atualizar uma categoria',
+  })
+  update(
+    @NestRequest() req: AuthenticatedRequest,
+    @Param('id') categoryId: string,
+    @Body() dto: UpdateCategoryDto,
+  ) {
+    return this.categoriesService.updateCategory(
+      req.user.id,
+      categoryId,
+      dto,
+    );
+  }
 
-@UseGuards(JwtAuthGuard)
-@Delete(':id')
-remove(
-  @NestRequest() req: AuthenticatedRequest,
-  @Param('id') categoryId: string,
-) {
-  return this.categoriesService.deleteCategory(
-    req.user.id,
-    categoryId,
-  );
-}
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  @ApiOperation({
+    summary: 'Excluir uma categoria',
+  })
+  remove(
+    @NestRequest() req: AuthenticatedRequest,
+    @Param('id') categoryId: string,
+  ) {
+    return this.categoriesService.deleteCategory(
+      req.user.id,
+      categoryId,
+    );
+  }
 }

@@ -7,8 +7,14 @@ import {
   Get,
   Patch,
   Param,
-  Delete
+  Delete,
 } from '@nestjs/common';
+
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { RecurringExpensesService } from './recurring-expenses.service';
 import { CreateRecurringExpenseDto } from './dto/create-recurring-expense.dto';
@@ -23,6 +29,8 @@ type AuthenticatedRequest = Request & {
   };
 };
 
+@ApiTags('Recurring Expenses')
+@ApiBearerAuth()
 @Controller('recurring-expenses')
 export class RecurringExpensesController {
   constructor(
@@ -31,6 +39,9 @@ export class RecurringExpensesController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @ApiOperation({
+    summary: 'Criar uma nova despesa recorrente',
+  })
   create(
     @NestRequest() req: AuthenticatedRequest,
     @Body() dto: CreateRecurringExpenseDto,
@@ -42,38 +53,47 @@ export class RecurringExpensesController {
   }
 
   @UseGuards(JwtAuthGuard)
-@Get()
-getRecurringExpenses(
-  @NestRequest() req: AuthenticatedRequest,
-) {
-  return this.recurringExpensesService.getRecurringExpensesByUserId(
-    req.user.id,
-  );
-}
+  @Get()
+  @ApiOperation({
+    summary: 'Listar despesas recorrentes',
+  })
+  getRecurringExpenses(
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
+    return this.recurringExpensesService.getRecurringExpensesByUserId(
+      req.user.id,
+    );
+  }
 
-@UseGuards(JwtAuthGuard)
-@Patch(':id')
-update(
-  @NestRequest() req: AuthenticatedRequest,
-  @Param('id') recurringExpenseId: string,
-  @Body() dto: UpdateRecurringExpenseDto,
-) {
-  return this.recurringExpensesService.updateRecurringExpense(
-    req.user.id,
-    recurringExpenseId,
-    dto,
-  );
-}
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  @ApiOperation({
+    summary: 'Atualizar uma despesa recorrente',
+  })
+  update(
+    @NestRequest() req: AuthenticatedRequest,
+    @Param('id') recurringExpenseId: string,
+    @Body() dto: UpdateRecurringExpenseDto,
+  ) {
+    return this.recurringExpensesService.updateRecurringExpense(
+      req.user.id,
+      recurringExpenseId,
+      dto,
+    );
+  }
 
-@UseGuards(JwtAuthGuard)
-@Delete(':id')
-remove(
-  @NestRequest() req: AuthenticatedRequest,
-  @Param('id') recurringExpenseId: string,
-) {
-  return this.recurringExpensesService.deleteRecurringExpense(
-    req.user.id,
-    recurringExpenseId,
-  );
-}
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  @ApiOperation({
+    summary: 'Excluir uma despesa recorrente',
+  })
+  remove(
+    @NestRequest() req: AuthenticatedRequest,
+    @Param('id') recurringExpenseId: string,
+  ) {
+    return this.recurringExpensesService.deleteRecurringExpense(
+      req.user.id,
+      recurringExpenseId,
+    );
+  }
 }

@@ -231,13 +231,19 @@ Essa organização facilita a manutenção e a evolução da aplicação.
 
 ## 📚 Documentação da API
 
-A API possui documentação interativa utilizando **Swagger/OpenAPI**.
+A API possui documentação interativa através do Swagger.
 
-Com a aplicação em execução, acesse:
+### Produção
 
-```text
-http://localhost:3000/swagger
-```
+👉 [Acessar Swagger](https://gfinance-production-d5a6.up.railway.app/swagger)
+
+### Execução local
+
+Com a aplicação rodando localmente:
+
+👉 [Swagger local](http://localhost:3000/swagger)
+
+A documentação permite visualizar os endpoints, parâmetros, DTOs e autenticar requisições protegidas utilizando JWT.
 
 A interface permite:
 

@@ -619,13 +619,6 @@ O projeto aborda conceitos como:
 
 ## 🚀 Próximos passos
 
-O MVP atual está estruturado e funcional.
-
-Possíveis evoluções futuras incluem:
-
-- Evolução da infraestrutura
-## 🚀 Próximos passos
-
 O MVP atual está estruturado e funcional, com backend e frontend integrados.
 
 Possíveis evoluções futuras incluem:

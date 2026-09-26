@@ -2,7 +2,7 @@
 
 API backend para gerenciamento de finanças pessoais, desenvolvida com **NestJS, TypeScript, PostgreSQL e Prisma**.
 
-O gWallet faz parte de uma aplicação full stack para gerenciamento financeiro, com frontend desenvolvido em **Vite**, permitindo que usuários registrem suas movimentações, organizem despesas por categorias, acompanhem despesas recorrentes, definam metas financeiras e gerem relatórios financeiros em PDF.
+O gWallet faz parte de uma aplicação full stack para gerenciamento financeiro, com frontend desenvolvido em **React + Vite**, estruturado como uma **Progressive Web App (PWA)**.
 
 O backend fornece uma API REST autenticada utilizando JWT e integra serviços como **Redis, BullMQ, Resend e PDFKit** para processamento assíncrono, notificações e geração de relatórios.
 
@@ -118,8 +118,10 @@ E-mail do usuário
 
 ### Frontend
 
-- Vite
 - React
+- Vite
+- Progressive Web App (PWA)
+- Integração com API REST
 
 ### Backend
 

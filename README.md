@@ -2,9 +2,9 @@
 
 API backend para gerenciamento de finanças pessoais, desenvolvida com **NestJS, TypeScript, PostgreSQL e Prisma**.
 
-O gWallet permite que usuários registrem suas movimentações financeiras, organizem despesas por categorias, acompanhem despesas recorrentes, definam metas financeiras e gerem relatórios financeiros em PDF.
+O gWallet faz parte de uma aplicação full stack para gerenciamento financeiro, com frontend desenvolvido em **Vite**, permitindo que usuários registrem suas movimentações, organizem despesas por categorias, acompanhem despesas recorrentes, definam metas financeiras e gerem relatórios financeiros em PDF.
 
-A aplicação também utiliza **Redis + BullMQ** para processamento assíncrono e possui um sistema de lembretes por e-mail para despesas recorrentes.
+O backend fornece uma API REST autenticada utilizando JWT e integra serviços como **Redis, BullMQ, Resend e PDFKit** para processamento assíncrono, notificações e geração de relatórios.
 
 ---
 
@@ -114,48 +114,12 @@ E-mail do usuário
 
 ---
 
-## 🏗️ Arquitetura
-
-O projeto utiliza uma arquitetura modular baseada no NestJS.
-
-```text
-                    ┌─────────────────┐
-                    │     Cliente     │
-                    └────────┬────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │    NestJS API   │
-                    └────────┬────────┘
-                             │
-          ┌──────────────────┼──────────────────┐
-          │                  │                  │
-          ▼                  ▼                  ▼
-      Auth/Auth          Financeiro         Relatórios
-          │                  │                  │
-          │                  ▼                  ▼
-          │              Prisma             PDFKit
-          │                  │
-          └──────────────┬───┘
-                         │
-                         ▼
-                   PostgreSQL
-                         
-                         │
-                         ▼
-                       Redis
-                         │
-                         ▼
-                      BullMQ
-                         │
-                         ▼
-                   Processamento
-                   assíncrono
-```
-
----
-
 ## 🛠️ Tecnologias
+
+### Frontend
+
+- Vite
+- React
 
 ### Backend
 
@@ -517,6 +481,121 @@ endDate
 
 ---
 
+## 🏗️ Arquitetura
+
+O projeto utiliza uma arquitetura modular baseada no NestJS.
+
+```mermaid
+flowchart TB
+
+    Client["👤 Client / Frontend"]
+
+    API["🚀 NestJS API<br/>REST • JWT • Swagger"]
+
+    subgraph Modules["Módulos da aplicação"]
+        Auth["Auth"]
+        Finance["Finances"]
+        Transactions["Transactions"]
+        Categories["Categories"]
+        Recurring["Recurring Expenses"]
+        Goals["Financial Goals"]
+        Reports["Financial Reports"]
+    end
+
+    Prisma["Prisma ORM"]
+    PostgreSQL[("PostgreSQL")]
+
+    Redis[("Redis")]
+    BullMQ["BullMQ"]
+    Jobs["Background Jobs"]
+
+    Resend["Resend<br/>Email Notifications"]
+    PDFKit["PDFKit<br/>Financial PDF Reports"]
+
+    subgraph Railway["☁️ Railway"]
+        API
+        Redis
+        PostgreSQL
+        BullMQ
+        Jobs
+    end
+
+    Client --> API
+
+    API --> Auth
+    API --> Finance
+    API --> Transactions
+    API --> Categories
+    API --> Recurring
+    API --> Goals
+    API --> Reports
+
+    API --> Prisma
+    Prisma --> PostgreSQL
+
+    API --> Redis
+    Redis --> BullMQ
+    BullMQ --> Jobs
+
+    API --> Resend
+    API --> PDFKit
+
+    Swagger["📚 Swagger<br/>/swagger"]
+    API --> Swagger
+
+    classDef api fill:#1e293b,stroke:#38bdf8,color:#fff,stroke-width:2px
+    classDef database fill:#172554,stroke:#60a5fa,color:#fff
+    classDef service fill:#1e293b,stroke:#94a3b8,color:#fff
+    classDef module fill:#0f172a,stroke:#64748b,color:#fff
+    classDef external fill:#111827,stroke:#22d3ee,color:#fff
+
+    class API api
+    class PostgreSQL,Redis database
+    class Prisma,BullMQ,Jobs,Resend,PDFKit,Swagger service
+    class Auth,Finance,Transactions,Categories,Recurring,Goals,Reports module
+    class Client external
+```
+
+### Fluxo principal
+
+```text
+Cliente
+   │
+   ▼
+NestJS API
+   │
+   ├── JWT / Autenticação
+   │
+   ├── Regras de negócio
+   │
+   ├── Prisma ──────────► PostgreSQL
+   │
+   ├── Redis ───────────► BullMQ ─────► Jobs
+   │
+   ├── Resend ──────────► E-mails
+   │
+   └── PDFKit ──────────► Relatórios PDF
+```
+
+### Infraestrutura
+
+```text
+                         ┌──────────────────────┐
+                         │       Railway        │
+                         │                      │
+                         │  ┌────────────────┐  │
+                         │  │   NestJS API   │  │
+                         │  └───────┬────────┘  │
+                         │          │           │
+                         │     ┌────┴────┐      │
+                         │     ▼         ▼      │
+                         │ PostgreSQL   Redis   │
+                         │               │      │
+                         │               ▼      │
+                         │            BullMQ    │
+                         └──────────────────────┘
+```
+
 ## 📈 Objetivo do projeto
 
 O gWallet foi desenvolvido como um projeto prático para aplicar conceitos de desenvolvimento backend, arquitetura de APIs e engenharia de software.
@@ -545,6 +624,19 @@ O MVP atual está estruturado e funcional.
 Possíveis evoluções futuras incluem:
 
 - Evolução da infraestrutura
+## 🚀 Próximos passos
+
+O MVP atual está estruturado e funcional, com backend e frontend integrados.
+
+Possíveis evoluções futuras incluem:
+
+- Evolução da infraestrutura e observabilidade
+- Implementação de testes automatizados mais abrangentes
+- Expansão dos relatórios financeiros
+- Melhorias no processamento assíncrono
+- Monitoramento e métricas da aplicação
+- Otimizações de performance e escalabilidade
+- Evolução da experiência do usuário
 
 ---
 

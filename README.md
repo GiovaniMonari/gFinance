@@ -1,8 +1,8 @@
-# gWallet
+# gFinance
 
 API backend para gerenciamento de finanças pessoais, desenvolvida com **NestJS, TypeScript, PostgreSQL e Prisma**.
 
-O gWallet faz parte de uma aplicação full stack para gerenciamento financeiro, com frontend desenvolvido em **React + Vite**, estruturado como uma **Progressive Web App (PWA)**.
+O gFinance faz parte de uma aplicação full stack para gerenciamento financeiro, com frontend desenvolvido em **React + Vite**, estruturado como uma **Progressive Web App (PWA)**.
 
 O backend fornece uma API REST autenticada utilizando JWT e integra serviços como **Redis, BullMQ, Resend e PDFKit** para processamento assíncrono, notificações e geração de relatórios.
 
@@ -600,7 +600,7 @@ NestJS API
 
 ## 📈 Objetivo do projeto
 
-O gWallet foi desenvolvido como um projeto prático para aplicar conceitos de desenvolvimento backend, arquitetura de APIs e engenharia de software.
+O gFinance foi desenvolvido como um projeto prático para aplicar conceitos de desenvolvimento backend, arquitetura de APIs e engenharia de software.
 
 O projeto aborda conceitos como:
 

@@ -9,6 +9,7 @@ import { RecurringExpensesModule } from './recurring-expenses/recurring-expenses
 import { FinancialGoalsModule } from './financial-goals/financial-goals.module';
 import { FinancialReportsModule } from './financial-reports/financial-reports.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { OpenFinanceModule } from './open-finance/open-finance.module';
 import { EmailModule } from './email/email.module';
 
 @Module({
@@ -23,7 +24,8 @@ import { EmailModule } from './email/email.module';
     QueueModule,
     FinancialGoalsModule,
     FinancialReportsModule,
-    EmailModule
+    EmailModule,
+    OpenFinanceModule,
   ],
 })
 export class AppModule {}

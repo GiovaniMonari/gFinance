@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  Bot,
   Brain,
   CheckCircle2,
   Github,
@@ -63,15 +62,34 @@ const technologies = [
   'Open Finance',
 ]
 
+const expenseBars = [
+  {
+    label: 'Moradia',
+    width: '72%',
+  },
+  {
+    label: 'Alimentação',
+    width: '54%',
+  },
+  {
+    label: 'Transporte',
+    width: '31%',
+  },
+]
+
 function App() {
   return (
     <main>
+      {/* =====================================================
+          NAVBAR
+      ====================================================== */}
       <nav className="navbar">
         <div className="container nav-content">
-          <a href="#" className="logo">
+          <a href="#" className="logo" aria-label="gFinance">
             <div className="logo-icon">
               <Wallet size={21} />
             </div>
+
             <span>gFinance</span>
           </a>
 
@@ -80,13 +98,17 @@ function App() {
             href="https://github.com/GiovaniMonari/gFinance"
             target="_blank"
             rel="noreferrer"
+            aria-label="Abrir repositório do gFinance no GitHub"
           >
             <Github size={18} />
-            GitHub
+            <span>GitHub</span>
           </a>
         </div>
       </nav>
 
+      {/* =====================================================
+          HERO
+      ====================================================== */}
       <section className="hero">
         <div className="container hero-grid">
           <div className="hero-content">
@@ -123,10 +145,12 @@ function App() {
                 <CheckCircle2 size={16} />
                 Android
               </span>
+
               <span>
                 <CheckCircle2 size={16} />
                 Inteligência financeira
               </span>
+
               <span>
                 <CheckCircle2 size={16} />
                 Open Finance
@@ -134,12 +158,17 @@ function App() {
             </div>
           </div>
 
+          {/* =================================================
+              PHONE MOCKUP
+          ================================================== */}
           <div className="phone-wrapper">
             <div className="phone">
               <div className="phone-camera" />
+
               <div className="phone-screen">
                 <div className="mock-header">
                   <span>Olá!</span>
+
                   <span className="mock-avatar">
                     <Wallet size={14} />
                   </span>
@@ -155,31 +184,37 @@ function App() {
                     <small>Economizado este mês</small>
                     <strong>R$ 1.240,00</strong>
                   </div>
+
                   <Target size={25} />
                 </div>
 
-                <div className="mock-section-title">Resumo financeiro</div>
+                <div className="mock-section-title">
+                  Resumo financeiro
+                </div>
 
                 <div className="mock-bars">
-                  <div className="mock-bar">
-                    <span>Moradia</span>
-                    <i style={{ width: '72%' }} />
-                  </div>
-                  <div className="mock-bar">
-                    <span>Alimentação</span>
-                    <i style={{ width: '54%' }} />
-                  </div>
-                  <div className="mock-bar">
-                    <span>Transporte</span>
-                    <i style={{ width: '31%' }} />
-                  </div>
+                  {expenseBars.map((bar) => (
+                    <div className="mock-bar" key={bar.label}>
+                      <span>{bar.label}</span>
+
+                      <i
+                        style={{
+                          width: bar.width,
+                        }}
+                      />
+                    </div>
+                  ))}
                 </div>
 
                 <div className="mock-ai">
                   <Brain size={19} />
+
                   <div>
                     <strong>Análise inteligente</strong>
-                    <span>Seus gastos estão dentro do planejado.</span>
+
+                    <span>
+                      Seus gastos estão dentro do planejado.
+                    </span>
                   </div>
                 </div>
               </div>
@@ -188,14 +223,22 @@ function App() {
         </div>
       </section>
 
+      {/* =====================================================
+          FEATURES
+      ====================================================== */}
       <section className="section" id="features">
         <div className="container">
-          <div className="section-heading">
-            <span className="section-label">FUNCIONALIDADES</span>
+          <div className="section-heading center">
+            <span className="section-label">
+              FUNCIONALIDADES
+            </span>
+
             <h2>Mais do que controlar gastos.</h2>
+
             <p>
-              O gFinance V2 foi pensado para transformar dados financeiros
-              em informações que realmente ajudam nas suas decisões.
+              O gFinance V2 foi pensado para transformar dados
+              financeiros em informações que realmente ajudam
+              nas suas decisões.
             </p>
           </div>
 
@@ -204,11 +247,16 @@ function App() {
               const Icon = feature.icon
 
               return (
-                <article className="feature-card" key={feature.title}>
+                <article
+                  className="feature-card"
+                  key={feature.title}
+                >
                   <div className="feature-icon">
                     <Icon size={22} />
                   </div>
+
                   <h3>{feature.title}</h3>
+
                   <p>{feature.description}</p>
                 </article>
               )
@@ -217,37 +265,62 @@ function App() {
         </div>
       </section>
 
+      {/* =====================================================
+          INTELLIGENCE
+      ====================================================== */}
       <section className="intelligence-section">
         <div className="container intelligence-grid">
           <div>
-            <span className="section-label">INTELIGÊNCIA</span>
-            <h2>Seus dados começam a trabalhar para você.</h2>
+            <span className="section-label">
+              INTELIGÊNCIA
+            </span>
+
+            <h2>
+              Seus dados começam a trabalhar para você.
+            </h2>
+
             <p>
-              O gFinance V2 combina análise financeira, automação e recursos
-              de inteligência para transformar informações em contexto.
+              O gFinance V2 combina análise financeira,
+              automação e recursos de inteligência para
+              transformar informações em contexto.
             </p>
 
             <div className="intelligence-list">
               <div>
                 <Brain size={20} />
-                <span>Análise dos seus padrões financeiros</span>
+
+                <span>
+                  Análise dos seus padrões financeiros
+                </span>
               </div>
+
               <div>
                 <Receipt size={20} />
-                <span>Extração de informações de recibos</span>
+
+                <span>
+                  Extração de informações de recibos
+                </span>
               </div>
+
               <div>
                 <Target size={20} />
-                <span>Acompanhamento das suas metas</span>
+
+                <span>
+                  Acompanhamento das suas metas
+                </span>
               </div>
             </div>
           </div>
 
+          {/* =================================================
+              ANALYSIS CARD
+          ================================================== */}
           <div className="analysis-card">
             <div className="analysis-header">
               <div className="analysis-icon">
                 <Brain size={20} />
               </div>
+
               <div>
                 <strong>Análise financeira</strong>
                 <span>gFinance Intelligence</span>
@@ -256,7 +329,10 @@ function App() {
 
             <div className="analysis-message">
               <span>Seu mês está indo bem.</span>
-              <strong>40% da sua renda foi preservada.</strong>
+
+              <strong>
+                40% da sua renda foi preservada.
+              </strong>
             </div>
 
             <div className="analysis-progress">
@@ -264,6 +340,7 @@ function App() {
                 <span>Meta de reserva</span>
                 <strong>30%</strong>
               </div>
+
               <div className="progress-track">
                 <div />
               </div>
@@ -272,14 +349,21 @@ function App() {
         </div>
       </section>
 
+      {/* =====================================================
+          TECHNOLOGIES
+      ====================================================== */}
       <section className="section">
         <div className="container">
           <div className="section-heading center">
-            <span className="section-label">TECNOLOGIA</span>
+            <span className="section-label">
+              TECNOLOGIA
+            </span>
+
             <h2>Construído para evoluir.</h2>
+
             <p>
-              Uma arquitetura moderna preparada para crescer junto com o
-              produto.
+              Uma arquitetura moderna preparada para crescer
+              junto com o produto.
             </p>
           </div>
 
@@ -287,47 +371,68 @@ function App() {
             {technologies.map((technology) => (
               <div className="tech-item" key={technology}>
                 <CheckCircle2 size={17} />
-                {technology}
+
+                <span>{technology}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* =====================================================
+          DOWNLOAD
+      ====================================================== */}
       <section className="download-section" id="download">
         <div className="container download-content">
           <Smartphone size={42} />
-          <span className="section-label">EXPERIMENTE</span>
+
+          <span className="section-label">
+            EXPERIMENTE
+          </span>
+
           <h2>Leve o gFinance com você.</h2>
+
           <p>
-            Baixe o aplicativo Android e experimente a nova geração do
-            gFinance.
+            Baixe o aplicativo Android e experimente a nova
+            geração do gFinance.
           </p>
 
-          <a className="download-button" href="/gfinance-v2.apk">
+          <a
+            className="download-button"
+            href="/gfinance-v2.apk"
+          >
             Baixar APK
             <ArrowRight size={19} />
           </a>
 
-          <small>Versão de demonstração para Android</small>
+          <small>
+            Versão de demonstração para Android
+          </small>
         </div>
       </section>
 
+      {/* =====================================================
+          FOOTER
+      ====================================================== */}
       <footer>
         <div className="container footer-content">
-          <div className="logo">
+          <a href="#" className="logo" aria-label="gFinance V2">
             <div className="logo-icon">
               <Wallet size={19} />
             </div>
-            <span>gFinance V2</span>
-          </div>
 
-          <span>Projeto desenvolvido por Giovani Monari</span>
+            <span>gFinance V2</span>
+          </a>
+
+          <span>
+            Projeto desenvolvido por Giovani Monari
+          </span>
 
           <a
             href="https://github.com/GiovaniMonari/gFinance"
             target="_blank"
             rel="noreferrer"
+            aria-label="Abrir gFinance no GitHub"
           >
             <Github size={18} />
           </a>

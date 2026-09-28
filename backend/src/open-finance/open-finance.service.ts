@@ -34,4 +34,31 @@ export class OpenFinanceService {
 
     return response.data;
   }
+
+  async connectItem(userId: string, itemId: string) {
+    const baseUrl = this.configService.getOrThrow<string>(
+      'OPEN_FINANCE_URL',
+    )
+
+    const internalToken = this.configService.getOrThrow<string>(
+      'INTERNAL_SERVICE_TOKEN',
+    )
+
+    const response = await firstValueFrom(
+      this.httpService.post(
+        `${baseUrl}/connections/pluggy/connect`,
+        {
+          item_id: itemId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${internalToken}`,
+            'X-User-Id': userId,
+          },
+        },
+      ),
+    )
+
+    return response.data
+  }
 }

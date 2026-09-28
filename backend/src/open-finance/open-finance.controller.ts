@@ -1,5 +1,6 @@
 import {
   Controller,
+  Body,
   Post,
   Req,
   UseGuards,
@@ -22,4 +23,20 @@ export class OpenFinanceController {
 
     return this.openFinanceService.createConnectToken(req.user.id);
   }
+
+  @Post('connect')
+    @UseGuards(JwtAuthGuard)
+    async connect(
+      @Req() req: { user?: { id: string } },
+      @Body() body: { itemId: string },
+    ) {
+      if (!req.user) {
+        throw new Error('Authenticated user not found')
+      }
+
+      return this.openFinanceService.connectItem(
+        req.user.id,
+        body.itemId,
+      )
+    }
 }

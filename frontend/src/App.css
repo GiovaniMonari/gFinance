@@ -760,3 +760,39 @@ footer {
     text-align: center;
   }
 }
+@media (max-width: 768px) {
+    .section-heading {
+        grid-template-columns: 1fr;
+            gap: 14px;
+              }
+
+                .section-heading h2,
+                  .section-heading p {
+                      max-width: none;
+                        }
+
+                          .section-heading h2 {
+                              margin: 0;
+                                }
+
+                                  .section-heading p {
+                                      margin: 0;
+                                        }
+
+                                          .intelligence-grid {
+                                              grid-template-columns: 1fr;
+                                                  gap: 40px;
+                                                    }
+
+                                                      .intelligence-grid h2 {
+                                                          max-width: none;
+                                                            }
+
+                                                              .intelligence-grid > div:first-child {
+                                                                  width: 100%;
+                                                                    }
+
+                                                                      .analysis-card {
+                                                                          width: 100%;
+                                                                            }
+                                                                         }

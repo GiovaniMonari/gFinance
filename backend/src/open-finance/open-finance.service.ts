@@ -85,4 +85,31 @@ export class OpenFinanceService {
 
     return response.data;
   }
+
+  async getAccounts(
+    userId: string,
+    connectionId: string,
+  ) {
+    const baseUrl = this.configService.getOrThrow<string>(
+      'OPEN_FINANCE_URL',
+    );
+
+    const internalToken = this.configService.getOrThrow<string>(
+      'INTERNAL_SERVICE_TOKEN',
+    );
+
+    const response = await firstValueFrom(
+      this.httpService.get(
+        `${baseUrl}/connections/${connectionId}/accounts`,
+        {
+          headers: {
+            Authorization: `Bearer ${internalToken}`,
+            'X-User-Id': userId,
+          },
+        },
+      ),
+    );
+
+    return response.data;
+  }
 }

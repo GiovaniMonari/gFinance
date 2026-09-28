@@ -5,6 +5,7 @@ import {
   Get,
   Req,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { OpenFinanceService } from './open-finance.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -52,6 +53,22 @@ export class OpenFinanceController {
 
     return this.openFinanceService.getConnections(
       req.user.id,
+    );
+  }
+
+  @Get('connections/:connectionId/accounts')
+  @UseGuards(JwtAuthGuard)
+  async getAccounts(
+    @Req() req: { user?: { id: string } },
+    @Param('connectionId') connectionId: string,
+  ) {
+    if (!req.user) {
+      throw new Error('Authenticated user not found');
+    }
+
+    return this.openFinanceService.getAccounts(
+      req.user.id,
+      connectionId,
     );
   }
 }

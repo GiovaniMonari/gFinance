@@ -2,6 +2,7 @@ import {
   Controller,
   Body,
   Post,
+  Get,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -39,4 +40,18 @@ export class OpenFinanceController {
         body.itemId,
       )
     }
+
+  @Get('connections')
+  @UseGuards(JwtAuthGuard)
+  async getConnections(
+    @Req() req: { user?: { id: string } },
+  ) {
+    if (!req.user) {
+      throw new Error('Authenticated user not found');
+    }
+
+    return this.openFinanceService.getConnections(
+      req.user.id,
+    );
+  }
 }

@@ -71,4 +71,24 @@ export class OpenFinanceController {
       connectionId,
     );
   }
+
+  @Get(
+  'connections/:connectionId/accounts/:accountId/transactions',
+)
+@UseGuards(JwtAuthGuard)
+  async getTransactions(
+    @Req() req: { user?: { id: string } },
+    @Param('connectionId') connectionId: string,
+    @Param('accountId') accountId: string,
+  ) {
+    if (!req.user) {
+      throw new Error('Authenticated user not found');
+    }
+
+    return this.openFinanceService.getTransactions(
+      req.user.id,
+      connectionId,
+      accountId,
+    );
+  }
 }

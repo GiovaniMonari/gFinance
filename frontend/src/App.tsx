@@ -229,16 +229,11 @@ function App() {
       <section className="section" id="features">
         <div className="container">
           <div className="section-heading center">
-            <span className="section-label">
-              FUNCIONALIDADES
-            </span>
-
             <h2>Mais do que controlar gastos.</h2>
 
             <p>
-              O gFinance V2 foi pensado para transformar dados
-              financeiros em informações que realmente ajudam
-              nas suas decisões.
+              O gFinance V2 foi pensado para transformar dados financeiros
+              em informações que realmente ajudam nas suas decisões.
             </p>
           </div>
 
@@ -355,15 +350,10 @@ function App() {
       <section className="section">
         <div className="container">
           <div className="section-heading center">
-            <span className="section-label">
-              TECNOLOGIA
-            </span>
-
             <h2>Construído para evoluir.</h2>
 
             <p>
-              Uma arquitetura moderna preparada para crescer
-              junto com o produto.
+              Uma arquitetura moderna preparada para crescer junto com o produto.
             </p>
           </div>
 

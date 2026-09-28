@@ -95,7 +95,7 @@ function App() {
 
           <a
             className="github-link"
-            href="https://github.com/GiovaniMonari/gFinance"
+            href="https://github.com/GiovaniMonari"
             target="_blank"
             rel="noreferrer"
             aria-label="Abrir repositório do gFinance no GitHub"
@@ -419,7 +419,7 @@ function App() {
           </span>
 
           <a
-            href="https://github.com/GiovaniMonari/gFinance"
+            href="https://github.com/GiovaniMonari"
             target="_blank"
             rel="noreferrer"
             aria-label="Abrir gFinance no GitHub"

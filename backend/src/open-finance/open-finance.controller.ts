@@ -8,17 +8,40 @@ import {
   UseGuards,
   Param,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { OpenFinanceService } from './open-finance.service';
+import { OpenFinanceAccessGuard } from './open-finance-access.guard';
+import { OpenFinanceAccessService } from './open-finance-access.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@ApiTags('Open Finance')
+@ApiBearerAuth()
 @Controller('open-finance')
 export class OpenFinanceController {
   constructor(
     private readonly openFinanceService: OpenFinanceService,
+    private readonly accessService: OpenFinanceAccessService,
   ) {}
 
-  @Post('connect-token')
+  /**
+   * Whether this account may start a connection right now.
+   *
+   * The screen asks this before it draws anything, so the restriction reads
+   * as a stated fact rather than as a button that disappears. It answers the
+   * same question the guard below enforces — one method, one answer.
+   */
+  @Get('status')
   @UseGuards(JwtAuthGuard)
+  async getStatus(@Req() req: { user?: { id: string } }) {
+    if (!req.user) {
+      throw new Error('Authenticated user not found');
+    }
+
+    return this.accessService.getAvailability(req.user.id);
+  }
+
+  @Post('connect-token')
+  @UseGuards(JwtAuthGuard, OpenFinanceAccessGuard)
   async createConnectToken(@Req() req: { user?: { id: string } }) {
     if (!req.user) {
       throw new Error('Authenticated user not found');
@@ -28,7 +51,7 @@ export class OpenFinanceController {
   }
 
   @Post('connect')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, OpenFinanceAccessGuard)
     async connect(
       @Req() req: { user?: { id: string } },
       @Body() body: { itemId: string },

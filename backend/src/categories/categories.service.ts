@@ -6,10 +6,49 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { DEFAULT_CATEGORIES } from './default-categories';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * Give an account the predefined categories — and only a brand-new one.
+   *
+   * Two conditions, both deliberate:
+   *
+   * - **Only when there is nothing there.** An account that already has
+   *   categories asked for exactly those, and re-adding a fixed list would
+   *   quietly restore the ones its owner deleted. "Avoid creating duplicates
+   *   if the user already has categories" is an instruction to leave those
+   *   accounts alone, not merely to repeat no name.
+   *
+   * - **`skipDuplicates` regardless.** The no-duplicates rule is enforced by
+   *   `@@unique([financeId, name])` in the database rather than by a
+   *   read-then-write race in this method, so two requests arriving together
+   *   cannot both insert `Alimentação`.
+   *
+   * Runs on the read rather than at account creation, so accounts that
+   * already exist reach the same state without a migration or a backfill —
+   * and so the guarantee holds wherever the first read happens to come from.
+   */
+  private async ensureDefaultCategories(financeId: string): Promise<void> {
+    const existing = await this.prisma.category.count({
+      where: {
+        financeId,
+      },
+    });
+
+    if (existing > 0) return;
+
+    await this.prisma.category.createMany({
+      data: DEFAULT_CATEGORIES.map((name) => ({
+        financeId,
+        name,
+      })),
+      skipDuplicates: true,
+    });
+  }
 
   async createCategory(
     userId: string,
@@ -67,6 +106,8 @@ export class CategoriesService {
       'Conta não encontrada para o usuário',
     );
   }
+
+  await this.ensureDefaultCategories(finance.id);
 
   return this.prisma.category.findMany({
     where: {

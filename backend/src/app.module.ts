@@ -11,11 +11,13 @@ import { FinancialReportsModule } from './financial-reports/financial-reports.mo
 import { ScheduleModule } from '@nestjs/schedule';
 import { OpenFinanceModule } from './open-finance/open-finance.module';
 import { EmailModule } from './email/email.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     PrismaModule,
     AuthModule,
+    UsersModule,
     financeModule,
     TransactionsModule,
     CategoriesModule,

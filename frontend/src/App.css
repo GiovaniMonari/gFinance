@@ -355,8 +355,8 @@
   background: var(--canvas-raised);
 
   box-shadow:
-    0 34px 70px -34px rgba(0, 0, 0, 0.95),
-    0 12px 28px -14px rgba(0, 0, 0, 0.8),
+    0 34px 70px -34px var(--shadow-deep),
+    0 12px 28px -14px var(--shadow-deep),
     0 0 0 7px var(--accent-haze-soft);
 
   transform: rotate(2deg);
@@ -370,8 +370,8 @@
   transform: rotate(0deg) translateY(-5px);
 
   box-shadow:
-    0 42px 82px -36px rgba(0, 0, 0, 0.95),
-    0 14px 32px -16px rgba(0, 0, 0, 0.8),
+    0 42px 82px -36px var(--shadow-deep),
+    0 14px 32px -16px var(--shadow-deep),
     0 0 0 7px var(--accent-haze);
 }
 

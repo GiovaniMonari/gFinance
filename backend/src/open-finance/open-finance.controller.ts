@@ -1,6 +1,7 @@
 import {
   Controller,
   Body,
+  Delete,
   Post,
   Get,
   Req,
@@ -53,6 +54,22 @@ export class OpenFinanceController {
 
     return this.openFinanceService.getConnections(
       req.user.id,
+    );
+  }
+
+  @Delete('connections/:connectionId')
+  @UseGuards(JwtAuthGuard)
+  async disconnect(
+    @Req() req: { user?: { id: string } },
+    @Param('connectionId') connectionId: string,
+  ) {
+    if (!req.user) {
+      throw new Error('Authenticated user not found');
+    }
+
+    return this.openFinanceService.disconnectConnection(
+      req.user.id,
+      connectionId,
     );
   }
 

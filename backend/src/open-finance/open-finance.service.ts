@@ -28,6 +28,29 @@ export class OpenFinanceService {
     private readonly configService: ConfigService,
   ) {}
 
+  /**
+   * A path id before it goes into an internal URL.
+   *
+   * These values arrive from the public route and are interpolated straight
+   * into a request the service makes on the caller's behalf — with the
+   * internal token attached. Left alone, a `#` swallows the rest of the path
+   * and the caller reaches a *different* downstream handler than the one this
+   * method is named after, and a `/` or `..` walks out of the segment.
+   *
+   * The allowlist is the actual defence: it admits only what an identifier is
+   * made of, which covers both the cuids this database issues and the UUIDs
+   * the Open Finance service stores, while excluding every delimiter a URL
+   * would otherwise honour. Encoding follows so that even a value admitted by
+   * a future relaxation of the rule cannot be read as structure.
+   */
+  private static safeId(id: string): string {
+    if (!/^[A-Za-z0-9_-]+$/.test(id)) {
+      throw new BadRequestException('Identificador inválido.');
+    }
+
+    return encodeURIComponent(id);
+  }
+
   async createConnectToken(userId: string) {
     const baseUrl = this.configService.getOrThrow<string>(
       'OPEN_FINANCE_URL',
@@ -118,7 +141,7 @@ export class OpenFinanceService {
 
     const response = await firstValueFrom(
       this.httpService.get(
-        `${baseUrl}/connections/${connectionId}/accounts`,
+        `${baseUrl}/connections/${OpenFinanceService.safeId(connectionId)}/accounts`,
         {
           headers: {
             Authorization: `Bearer ${internalToken}`,
@@ -145,7 +168,7 @@ export class OpenFinanceService {
 
     const response = await firstValueFrom(
       this.httpService.get(
-        `${baseUrl}/connections/${connectionId}/accounts/${accountId}/transactions`,
+        `${baseUrl}/connections/${OpenFinanceService.safeId(connectionId)}/accounts/${OpenFinanceService.safeId(accountId)}/transactions`,
         {
           headers: {
             Authorization: `Bearer ${internalToken}`,
@@ -181,9 +204,16 @@ export class OpenFinanceService {
       'INTERNAL_SERVICE_TOKEN',
     );
 
+    /*
+     * Validated before the call is attempted, so an unacceptable id is a 400
+     * from here rather than something the downstream translation below would
+     * try to interpret as a verdict from the provider.
+     */
+    const path = `${baseUrl}/connections/${OpenFinanceService.safeId(connectionId)}`;
+
     try {
       const response = await firstValueFrom(
-        this.httpService.delete(`${baseUrl}/connections/${connectionId}`, {
+        this.httpService.delete(path, {
           headers: {
             Authorization: `Bearer ${internalToken}`,
             'X-User-Id': userId,

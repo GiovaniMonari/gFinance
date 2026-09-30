@@ -51,17 +51,6 @@ const features = [
   },
 ]
 
-const technologies = [
-  'React Native',
-  'NestJS',
-  'TypeScript',
-  'PostgreSQL',
-  'Redis',
-  'GraphQL',
-  'WebSocket',
-  'Open Finance',
-]
-
 const expenseBars = [
   {
     label: 'Moradia',
@@ -353,16 +342,6 @@ function App() {
             <p>
               Uma arquitetura moderna preparada para crescer junto com o produto.
             </p>
-          </div>
-
-          <div className="tech-grid">
-            {technologies.map((technology) => (
-              <div className="tech-item" key={technology}>
-                <CheckCircle2 size={17} />
-
-                <span>{technology}</span>
-              </div>
-            ))}
           </div>
         </div>
       </section>

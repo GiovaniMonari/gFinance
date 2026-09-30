@@ -1,88 +1,13 @@
-:root {
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+/* ─────────────────────────────────────────────────────────────────────────────
+   Econva — Web landing
 
-  color: #101828;
-  background: #f6f8fb;
+   The informational front door of the product. Layout and content structure
+   are the landing page's own; the visual language is taken from the mobile
+   app: dark canvas, one accent hue, light instead of shadow, hairline
+   borders, generous space, the system typeface.
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --primary-soft: #eff6ff;
-
-  --text: #101828;
-  --text-secondary: #667085;
-  --text-muted: #98a2b3;
-
-  --surface: #ffffff;
-  --surface-soft: #f8fafc;
-
-  --border: #e6eaf0;
-  --border-strong: #d9e0e8;
-
-  --dark: #111827;
-
-  --shadow-sm:
-    0 1px 2px rgba(16, 24, 40, 0.03),
-    0 5px 16px rgba(16, 24, 40, 0.035);
-
-  --shadow-md:
-    0 14px 35px rgba(16, 24, 40, 0.07);
-
-  --shadow-lg:
-    0 28px 70px rgba(16, 24, 40, 0.11);
-
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-}
-
-/* =========================================================
-   RESET
-========================================================= */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  background: #f6f8fb;
-  color: var(--text);
-  overflow-x: hidden;
-}
-
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-img,
-svg {
-  max-width: 100%;
-}
+   Every colour comes from the tokens in styles.css — nothing is hard-coded.
+   ───────────────────────────────────────────────────────────────────────────── */
 
 /* =========================================================
    CONTAINER
@@ -117,28 +42,19 @@ svg {
   align-items: center;
   gap: 10px;
 
-  font-size: 18px;
-  font-weight: 750;
-  letter-spacing: -0.035em;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+
+  color: var(--text-primary);
 }
 
-.logo-icon {
-  width: 38px;
-  height: 38px;
-
-  display: grid;
-  place-items: center;
-
+.logo-mark {
+  display: block;
   flex: 0 0 auto;
-
-  border-radius: 12px;
-
-  background: var(--dark);
-  color: #fff;
-
-  box-shadow:
-    0 8px 18px rgba(17, 24, 39, 0.13),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  width: 23px;
+  height: 23px;
 }
 
 .github-link {
@@ -147,29 +63,30 @@ svg {
   justify-content: center;
   gap: 8px;
 
-  min-height: 38px;
-  padding: 0 13px;
+  min-height: 40px;
+  padding: 0 14px;
 
-  border: 1px solid rgba(17, 24, 39, 0.08);
-  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
 
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--surface);
+  color: var(--text-secondary);
 
   font-size: 13px;
-  font-weight: 650;
+  font-weight: 600;
 
   transition:
-    transform 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    transform var(--t-state) var(--ease-out),
+    background-color var(--t-state) var(--ease-out),
+    border-color var(--t-state) var(--ease-out),
+    color var(--t-state) var(--ease-out);
 }
 
 .github-link:hover {
   transform: translateY(-1px);
-  background: #fff;
-  border-color: rgba(17, 24, 39, 0.14);
-  box-shadow: var(--shadow-sm);
+  background: var(--surface-strong);
+  border-color: var(--border-accent);
+  color: var(--text-primary);
 }
 
 /* =========================================================
@@ -191,22 +108,18 @@ svg {
   background:
     radial-gradient(
       circle at 82% 20%,
-      rgba(37, 99, 235, 0.10),
-      transparent 28%
+      var(--accent-veil-soft),
+      transparent 30%
     ),
     radial-gradient(
-      circle at 15% 75%,
-      rgba(37, 99, 235, 0.035),
-      transparent 25%
+      circle at 15% 78%,
+      var(--accent-haze-soft),
+      transparent 27%
     ),
-    linear-gradient(
-      180deg,
-      #f8fafc 0%,
-      #f6f8fb 75%,
-      #ffffff 100%
-    );
+    var(--canvas);
 }
 
+/* Orbit rings — the mobile First Access artwork, restated for a wide screen */
 .hero::before {
   content: "";
 
@@ -217,8 +130,11 @@ svg {
   width: 600px;
   height: 600px;
 
-  border: 1px solid rgba(37, 99, 235, 0.05);
+  border: 1px solid var(--border-accent);
   border-radius: 50%;
+  box-shadow:
+    0 0 0 55px var(--accent-haze),
+    0 0 0 110px var(--accent-haze-soft);
 
   pointer-events: none;
 }
@@ -233,7 +149,7 @@ svg {
   width: 600px;
   height: 600px;
 
-  border: 1px solid rgba(37, 99, 235, 0.035);
+  border: 1px solid var(--border-accent);
   border-radius: 50%;
 
   pointer-events: none;
@@ -260,17 +176,17 @@ svg {
   align-items: center;
   gap: 8px;
 
-  padding: 7px 11px;
+  padding: 7px 12px;
   margin-bottom: 20px;
 
-  border: 1px solid #dbe7ff;
-  border-radius: 999px;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--r-full);
 
-  background: rgba(239, 246, 255, 0.82);
-  color: var(--primary);
+  background: var(--accent-wash);
+  color: var(--accent-bright);
 
   font-size: 11px;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: 0.055em;
   text-transform: uppercase;
 }
@@ -281,14 +197,14 @@ svg {
   max-width: 680px;
 
   font-size: clamp(42px, 5.1vw, 68px);
-  line-height: 0.99;
+  line-height: 1.02;
 
-  letter-spacing: -0.065em;
-  font-weight: 820;
+  letter-spacing: -0.045em;
+  font-weight: 800;
 }
 
 .hero h1 span {
-  color: var(--primary);
+  color: var(--accent-bright);
 }
 
 .hero-description {
@@ -319,54 +235,51 @@ svg {
   gap: 9px;
 
   min-height: 48px;
-  padding: 0 18px;
+  padding: 0 20px;
 
-  border-radius: 11px;
+  border-radius: var(--r-field);
 
-  font-size: 13px;
-  font-weight: 720;
+  font-size: 14px;
+  font-weight: 700;
 
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease;
+    transform var(--t-state) var(--ease-out),
+    box-shadow var(--t-state) var(--ease-out),
+    background-color var(--t-state) var(--ease-out),
+    border-color var(--t-state) var(--ease-out),
+    filter var(--t-state) var(--ease-out);
 }
 
 .primary-button {
-  color: #fff;
-  background: var(--dark);
+  color: var(--text-primary);
+  background: linear-gradient(
+    135deg,
+    var(--accent-bright) 0%,
+    var(--accent) 52%,
+    var(--accent-deep) 100%
+  );
 
-  box-shadow:
-    0 10px 22px rgba(17, 24, 39, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  box-shadow: 0 12px 30px -14px var(--accent-glow);
 }
 
 .primary-button:hover {
   transform: translateY(-2px);
-  background: #1f2937;
-
-  box-shadow:
-    0 14px 28px rgba(17, 24, 39, 0.19),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  filter: brightness(1.07);
+  box-shadow: 0 18px 38px -14px var(--accent-glow);
 }
 
 .secondary-button {
   border: 1px solid var(--border-strong);
 
-  background: rgba(255, 255, 255, 0.82);
-  color: #344054;
-
-  box-shadow: 0 2px 7px rgba(16, 24, 40, 0.025);
+  background: var(--surface);
+  color: var(--text-primary);
 }
 
 .secondary-button:hover {
   transform: translateY(-2px);
 
-  background: #fff;
-  border-color: #cfd6df;
-
-  box-shadow: var(--shadow-sm);
+  background: var(--surface-strong);
+  border-color: var(--border-accent);
 }
 
 .hero-checks {
@@ -382,14 +295,14 @@ svg {
   align-items: center;
   gap: 6px;
 
-  color: #7b8794;
+  color: var(--text-secondary);
 
   font-size: 11px;
-  font-weight: 550;
+  font-weight: 500;
 }
 
 .hero-checks svg {
-  color: var(--primary);
+  color: var(--accent-bright);
 }
 
 /* =========================================================
@@ -416,13 +329,12 @@ svg {
 
   border-radius: 50%;
 
-  background:
-    radial-gradient(
-      circle,
-      rgba(37, 99, 235, 0.12) 0%,
-      rgba(37, 99, 235, 0.045) 45%,
-      transparent 70%
-    );
+  background: radial-gradient(
+    circle,
+    var(--accent-veil) 0%,
+    var(--accent-haze) 45%,
+    transparent 70%
+  );
 
   filter: blur(4px);
 }
@@ -437,30 +349,30 @@ svg {
 
   padding: 9px;
 
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--border-strong);
   border-radius: 42px;
 
-  background: #0d1117;
+  background: var(--canvas-raised);
 
   box-shadow:
-    0 34px 70px rgba(15, 23, 42, 0.22),
-    0 12px 28px rgba(15, 23, 42, 0.10),
-    0 0 0 7px rgba(17, 24, 39, 0.035);
+    0 34px 70px -34px rgba(0, 0, 0, 0.95),
+    0 12px 28px -14px rgba(0, 0, 0, 0.8),
+    0 0 0 7px var(--accent-haze-soft);
 
   transform: rotate(2deg);
 
   transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease;
+    transform 0.35s var(--ease-out),
+    box-shadow 0.35s var(--ease-out);
 }
 
 .phone:hover {
   transform: rotate(0deg) translateY(-5px);
 
   box-shadow:
-    0 42px 82px rgba(15, 23, 42, 0.24),
-    0 14px 32px rgba(15, 23, 42, 0.12),
-    0 0 0 7px rgba(17, 24, 39, 0.035);
+    0 42px 82px -36px rgba(0, 0, 0, 0.95),
+    0 14px 32px -16px rgba(0, 0, 0, 0.8),
+    0 0 0 7px var(--accent-haze);
 }
 
 .phone-camera {
@@ -477,7 +389,7 @@ svg {
 
   border-radius: 20px;
 
-  background: #090c10;
+  background: var(--canvas);
 }
 
 .phone-screen {
@@ -491,10 +403,10 @@ svg {
   background:
     radial-gradient(
       circle at 90% 0%,
-      rgba(37, 99, 235, 0.08),
-      transparent 28%
+      var(--accent-wash),
+      transparent 30%
     ),
-    #f7f9fc;
+    var(--canvas-elevated);
 
   overflow: hidden;
 }
@@ -504,10 +416,10 @@ svg {
   align-items: center;
   justify-content: space-between;
 
-  color: #182230;
+  color: var(--text-primary);
 
   font-size: 13px;
-  font-weight: 720;
+  font-weight: 700;
 }
 
 .mock-avatar {
@@ -517,11 +429,11 @@ svg {
   display: grid;
   place-items: center;
 
-  border: 1px solid #dce8ff;
+  border: 1px solid var(--border-accent);
   border-radius: 50%;
 
-  background: #eef4ff;
-  color: var(--primary);
+  background: var(--accent-wash);
+  color: var(--accent-bright);
 }
 
 .mock-balance {
@@ -532,10 +444,10 @@ svg {
 .mock-card small {
   display: block;
 
-  color: #8994a2;
+  color: var(--text-secondary);
 
   font-size: 9px;
-  font-weight: 550;
+  font-weight: 500;
 }
 
 .mock-balance strong {
@@ -543,11 +455,12 @@ svg {
 
   margin-top: 5px;
 
-  color: #101828;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 
   font-size: 27px;
-  letter-spacing: -0.055em;
-  font-weight: 760;
+  letter-spacing: -0.05em;
+  font-weight: 800;
 }
 
 .mock-card {
@@ -560,23 +473,23 @@ svg {
   margin-top: 17px;
   padding: 15px;
 
-  border-radius: 16px;
+  border-radius: var(--radius-md);
 
-  color: #fff;
+  color: var(--text-primary);
 
   background: linear-gradient(
     135deg,
-    #2563eb 0%,
-    #1d4ed8 100%
+    var(--accent) 0%,
+    var(--accent-deep) 100%
   );
 
   box-shadow:
-    0 10px 22px rgba(37, 99, 235, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 10px 22px -12px var(--accent-glow),
+    inset 0 1px 0 var(--highlight);
 }
 
 .mock-card small {
-  color: rgba(255, 255, 255, 0.68);
+  color: var(--highlight);
 }
 
 .mock-card strong {
@@ -584,6 +497,7 @@ svg {
 
   margin-top: 4px;
 
+  font-variant-numeric: tabular-nums;
   font-size: 16px;
   letter-spacing: -0.025em;
 }
@@ -591,10 +505,10 @@ svg {
 .mock-section-title {
   margin-top: 25px;
 
-  color: #273240;
+  color: var(--text-primary);
 
   font-size: 11px;
-  font-weight: 750;
+  font-weight: 700;
 }
 
 .mock-bars {
@@ -608,10 +522,10 @@ svg {
   display: grid;
   gap: 6px;
 
-  color: #65717e;
+  color: var(--text-secondary);
 
   font-size: 9px;
-  font-weight: 550;
+  font-weight: 500;
 }
 
 .mock-bar i {
@@ -619,15 +533,15 @@ svg {
 
   height: 7px;
 
-  border-radius: 99px;
+  border-radius: var(--r-full);
 
   background: linear-gradient(
     90deg,
-    #2563eb,
-    #4f83ed
+    var(--accent),
+    var(--accent-bright)
   );
 
-  box-shadow: 0 2px 5px rgba(37, 99, 235, 0.13);
+  box-shadow: 0 2px 5px -1px var(--accent-glow);
 }
 
 .mock-ai {
@@ -637,16 +551,14 @@ svg {
   margin-top: 24px;
   padding: 12px;
 
-  border: 1px solid #e8edf4;
+  border: 1px solid var(--border);
   border-radius: 13px;
 
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--surface);
 
-  box-shadow:
-    0 8px 22px rgba(30, 45, 65, 0.055),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow-sm);
 
-  color: var(--primary);
+  color: var(--accent-bright);
 }
 
 .mock-ai div {
@@ -656,14 +568,14 @@ svg {
 }
 
 .mock-ai strong {
-  color: #27313b;
+  color: var(--text-primary);
 
   font-size: 10px;
-  font-weight: 720;
+  font-weight: 700;
 }
 
 .mock-ai span {
-  color: #7a858f;
+  color: var(--text-secondary);
 
   font-size: 8px;
   line-height: 1.45;
@@ -675,7 +587,7 @@ svg {
 
 .section {
   padding: 88px 0;
-  background: #fff;
+  background: var(--canvas-elevated);
 }
 
 .section-heading {
@@ -693,10 +605,10 @@ svg {
 
   margin-bottom: 12px;
 
-  color: var(--primary);
+  color: var(--accent-bright);
 
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
@@ -710,13 +622,13 @@ svg {
 .download-content h2 {
   margin: 0;
 
-  color: #101828;
+  color: var(--text-primary);
 
   font-size: clamp(31px, 3.7vw, 44px);
-  line-height: 1.08;
+  line-height: 1.1;
 
-  letter-spacing: -0.055em;
-  font-weight: 780;
+  letter-spacing: -0.035em;
+  font-weight: 800;
 }
 
 .section-heading p {
@@ -724,7 +636,7 @@ svg {
 
   margin: 15px 0 0;
 
-  color: #667085;
+  color: var(--text-secondary);
 
   font-size: 15px;
   line-height: 1.7;
@@ -758,24 +670,21 @@ svg {
   padding: 24px;
 
   border: 1px solid var(--border);
-  border-radius: 17px;
+  border-radius: var(--radius-lg);
 
-  background: #fff;
-
-  box-shadow: var(--shadow-sm);
+  background: var(--surface);
 
   transition:
-    transform 0.22s ease,
-    border-color 0.22s ease,
-    box-shadow 0.22s ease;
+    transform var(--t-state) var(--ease-out),
+    border-color var(--t-state) var(--ease-out),
+    background-color var(--t-state) var(--ease-out);
 }
 
 .feature-card:hover {
   transform: translateY(-4px);
 
-  border-color: #dce4ee;
-
-  box-shadow: var(--shadow-md);
+  border-color: var(--border-accent);
+  background: var(--surface-strong);
 }
 
 .feature-icon {
@@ -785,17 +694,17 @@ svg {
   display: grid;
   place-items: center;
 
-  border: 1px solid #dce8ff;
-  border-radius: 12px;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--r-md);
 
-  background: #eff5ff;
-  color: var(--primary);
+  background: var(--accent-wash);
+  color: var(--accent-bright);
 }
 
 .feature-card h3 {
   margin: 19px 0 8px;
 
-  color: #182230;
+  color: var(--text-primary);
 
   font-size: 16px;
   letter-spacing: -0.015em;
@@ -804,7 +713,7 @@ svg {
 .feature-card p {
   margin: 0;
 
-  color: #74808c;
+  color: var(--text-secondary);
 
   font-size: 13px;
   line-height: 1.65;
@@ -820,10 +729,10 @@ svg {
   background:
     radial-gradient(
       circle at 12% 50%,
-      rgba(37, 99, 235, 0.045),
-      transparent 25%
+      var(--accent-haze),
+      transparent 27%
     ),
-    #f7f9fc;
+    var(--canvas);
 }
 
 .intelligence-grid {
@@ -844,7 +753,7 @@ svg {
 
   margin: 17px 0 0;
 
-  color: #667085;
+  color: var(--text-secondary);
 
   font-size: 15px;
   line-height: 1.75;
@@ -864,15 +773,15 @@ svg {
 
   padding: 9px 0;
 
-  color: #475467;
+  color: var(--text-primary);
 
   font-size: 13px;
-  font-weight: 620;
+  font-weight: 600;
 }
 
 .intelligence-list svg {
   flex: 0 0 auto;
-  color: var(--primary);
+  color: var(--accent-bright);
 }
 
 .analysis-card {
@@ -882,14 +791,12 @@ svg {
 
   padding: 25px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-strong);
   border-radius: 19px;
 
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--canvas-raised);
 
-  box-shadow:
-    0 28px 65px rgba(25, 40, 60, 0.08),
-    0 3px 10px rgba(25, 40, 60, 0.025);
+  box-shadow: var(--shadow-md);
 
   overflow: hidden;
 }
@@ -904,8 +811,8 @@ svg {
 
   background: linear-gradient(
     90deg,
-    #2563eb,
-    #60a5fa
+    var(--accent),
+    var(--accent-bright)
   );
 }
 
@@ -924,11 +831,11 @@ svg {
 
   flex: 0 0 auto;
 
-  border: 1px solid #dce8ff;
-  border-radius: 12px;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--r-md);
 
-  background: #eff5ff;
-  color: var(--primary);
+  background: var(--accent-wash);
+  color: var(--accent-bright);
 }
 
 .analysis-header div:last-child {
@@ -938,14 +845,14 @@ svg {
 }
 
 .analysis-header strong {
-  color: #182230;
+  color: var(--text-primary);
 
   font-size: 14px;
-  font-weight: 720;
+  font-weight: 700;
 }
 
 .analysis-header span {
-  color: #8a949d;
+  color: var(--text-secondary);
 
   font-size: 10px;
 }
@@ -958,18 +865,19 @@ svg {
 }
 
 .analysis-message span {
-  color: #78838d;
+  color: var(--text-secondary);
 
   font-size: 12px;
 }
 
 .analysis-message strong {
-  color: #101828;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 
   font-size: 22px;
   line-height: 1.2;
-  letter-spacing: -0.045em;
-  font-weight: 760;
+  letter-spacing: -0.04em;
+  font-weight: 800;
 }
 
 .analysis-progress {
@@ -983,7 +891,7 @@ svg {
 
   gap: 15px;
 
-  color: #596570;
+  color: var(--text-secondary);
 
   font-size: 11px;
   font-weight: 600;
@@ -996,9 +904,9 @@ svg {
 
   overflow: hidden;
 
-  border-radius: 99px;
+  border-radius: var(--r-full);
 
-  background: #edf1f5;
+  background: var(--surface-strong);
 }
 
 .progress-track div {
@@ -1009,11 +917,11 @@ svg {
 
   background: linear-gradient(
     90deg,
-    #2563eb,
-    #4f83ed
+    var(--accent),
+    var(--accent-bright)
   );
 
-  box-shadow: 0 2px 7px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 2px 7px -2px var(--accent-glow);
 }
 
 /* =========================================================
@@ -1043,34 +951,31 @@ svg {
   border: 1px solid var(--border);
   border-radius: 13px;
 
-  background: #fff;
+  background: var(--surface);
 
-  color: #55616c;
+  color: var(--text-secondary);
 
   font-size: 12px;
-  font-weight: 650;
-
-  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.02);
+  font-weight: 600;
 
   transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+    transform var(--t-state) var(--ease-out),
+    border-color var(--t-state) var(--ease-out),
+    background-color var(--t-state) var(--ease-out),
+    color var(--t-state) var(--ease-out);
 }
 
 .tech-item:hover {
   transform: translateY(-2px);
 
-  border-color: #d6e1ef;
-  background: #fbfcfe;
-
-  box-shadow: var(--shadow-sm);
+  border-color: var(--border-accent);
+  background: var(--surface-strong);
+  color: var(--text-primary);
 }
 
 .tech-item svg {
   flex: 0 0 auto;
-  color: var(--primary);
+  color: var(--accent-bright);
 }
 
 /* =========================================================
@@ -1084,15 +989,15 @@ svg {
 
   overflow: hidden;
 
-  color: #fff;
+  color: var(--text-primary);
 
   background:
     radial-gradient(
       circle at 50% 0%,
-      rgba(37, 99, 235, 0.22),
-      transparent 40%
+      var(--accent-wash-strong),
+      transparent 42%
     ),
-    #111827;
+    var(--canvas-elevated);
 
   text-align: center;
 }
@@ -1110,7 +1015,7 @@ svg {
 
   transform: translateX(-50%);
 
-  border: 1px solid rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--border-accent);
   border-radius: 50%;
 
   pointer-events: none;
@@ -1127,14 +1032,16 @@ svg {
 
 .download-content > svg {
   margin-bottom: 21px;
+
+  color: var(--accent-bright);
 }
 
 .download-content .section-label {
-  color: #8db4ff;
+  color: var(--accent-bright);
 }
 
 .download-content h2 {
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .download-content p {
@@ -1142,7 +1049,7 @@ svg {
 
   margin: 16px 0 0;
 
-  color: #aeb8c5;
+  color: var(--text-secondary);
 
   font-size: 15px;
   line-height: 1.7;
@@ -1151,26 +1058,28 @@ svg {
 .download-button {
   margin-top: 27px;
 
-  color: #111827;
-  background: #fff;
+  color: var(--text-primary);
+  background: linear-gradient(
+    135deg,
+    var(--accent-bright) 0%,
+    var(--accent) 52%,
+    var(--accent-deep) 100%
+  );
 
-  box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 12px 30px -14px var(--accent-glow);
 }
 
 .download-button:hover {
   transform: translateY(-2px);
 
-  background: #f8fafc;
-
-  box-shadow:
-    0 17px 35px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.07);
+  box-shadow: 0 17px 35px -14px var(--accent-glow);
 }
 
 .download-content small {
   margin-top: 11px;
 
-  color: #7f8a98;
+  color: var(--text-secondary);
 
   font-size: 10px;
 }
@@ -1182,9 +1091,9 @@ svg {
 footer {
   padding: 25px 0;
 
-  border-top: 1px solid #e5e9ed;
+  border-top: 1px solid var(--border);
 
-  background: #fff;
+  background: var(--canvas);
 }
 
 .footer-content {
@@ -1196,24 +1105,46 @@ footer {
 }
 
 .footer-content > span {
-  color: #89939d;
+  color: var(--text-secondary);
 
   font-size: 10px;
 }
 
 .footer-content > a {
   display: flex;
+  align-items: center;
+  gap: 8px;
 
-  color: #667085;
+  color: var(--text-secondary);
 
   transition:
-    color 0.2s ease,
-    transform 0.2s ease;
+    color var(--t-state) var(--ease-out),
+    transform var(--t-state) var(--ease-out);
 }
 
 .footer-content > a:hover {
-  color: #111827;
+  color: var(--text-primary);
   transform: translateY(-1px);
+}
+
+/* =========================================================
+   ENTRANCE
+   A quick, quiet arrival — content is readable from the first frame.
+========================================================= */
+
+.navbar,
+.hero-content > * {
+  animation: econva-rise 460ms var(--ease-out) both;
+}
+
+.hero-content > *:nth-child(1) { animation-delay: 40ms; }
+.hero-content > *:nth-child(2) { animation-delay: 100ms; }
+.hero-content > *:nth-child(3) { animation-delay: 155ms; }
+.hero-content > *:nth-child(4) { animation-delay: 210ms; }
+.hero-content > *:nth-child(5) { animation-delay: 260ms; }
+
+.phone-wrapper {
+  animation: econva-rise 560ms var(--ease-out) 240ms both;
 }
 
 /* =========================================================
@@ -1316,18 +1247,18 @@ footer {
   }
 
   .logo {
-    font-size: 16px;
+    font-size: 17px;
+    gap: 8px;
   }
 
-  .logo-icon {
-    width: 35px;
-    height: 35px;
-    border-radius: 11px;
+  .logo-mark {
+    width: 21px;
+    height: 21px;
   }
 
   .github-link {
-    width: 36px;
-    min-height: 36px;
+    width: 40px;
+    min-height: 40px;
     padding: 0;
 
     font-size: 0;
@@ -1350,7 +1281,7 @@ footer {
 
   .hero h1 {
     font-size: clamp(38px, 11vw, 48px);
-    line-height: 1.01;
+    line-height: 1.04;
   }
 
   .hero-description {

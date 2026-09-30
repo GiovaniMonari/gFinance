@@ -85,12 +85,10 @@ function App() {
       ====================================================== */}
       <nav className="navbar">
         <div className="container nav-content">
-          <a href="#" className="logo" aria-label="gFinance">
-            <div className="logo-icon">
-              <Wallet size={21} />
-            </div>
+          <a href="#" className="logo" aria-label="Econva">
+            <img className="logo-mark" src="/logo-mark.png" alt="" />
 
-            <span>gFinance</span>
+            <span>Econva</span>
           </a>
 
           <a
@@ -98,7 +96,7 @@ function App() {
             href="https://github.com/GiovaniMonari"
             target="_blank"
             rel="noreferrer"
-            aria-label="Abrir repositório do gFinance no GitHub"
+            aria-label="Abrir repositório do Econva no GitHub"
           >
             <Github size={18} />
             <span>GitHub</span>
@@ -114,7 +112,7 @@ function App() {
           <div className="hero-content">
             <span className="eyebrow">
               <Smartphone size={15} />
-              gFinance V2
+              Econva
             </span>
 
             <h1>
@@ -136,7 +134,7 @@ function App() {
               </a>
 
               <a className="secondary-button" href="#features">
-                Conhecer o gFinance
+                Conhecer o Econva
               </a>
             </div>
 
@@ -232,7 +230,7 @@ function App() {
             <h2>Mais do que controlar gastos.</h2>
 
             <p>
-              O gFinance V2 foi pensado para transformar dados financeiros
+              O Econva foi pensado para transformar dados financeiros
               em informações que realmente ajudam nas suas decisões.
             </p>
           </div>
@@ -275,7 +273,7 @@ function App() {
             </h2>
 
             <p>
-              O gFinance V2 combina análise financeira,
+              O Econva combina análise financeira,
               automação e recursos de inteligência para
               transformar informações em contexto.
             </p>
@@ -318,7 +316,7 @@ function App() {
 
               <div>
                 <strong>Análise financeira</strong>
-                <span>gFinance Intelligence</span>
+                <span>Econva Intelligence</span>
               </div>
             </div>
 
@@ -380,11 +378,11 @@ function App() {
             EXPERIMENTE
           </span>
 
-          <h2>Leve o gFinance com você.</h2>
+          <h2>Leve o Econva com você.</h2>
 
           <p>
             Baixe o aplicativo Android e experimente a nova
-            geração do gFinance.
+            geração do Econva.
           </p>
 
           <a
@@ -406,12 +404,10 @@ function App() {
       ====================================================== */}
       <footer>
         <div className="container footer-content">
-          <a href="#" className="logo" aria-label="gFinance V2">
-            <div className="logo-icon">
-              <Wallet size={19} />
-            </div>
+          <a href="#" className="logo" aria-label="Econva">
+            <img className="logo-mark" src="/logo-mark.png" alt="" />
 
-            <span>gFinance V2</span>
+            <span>Econva</span>
           </a>
 
           <span>
@@ -422,7 +418,7 @@ function App() {
             href="https://github.com/GiovaniMonari"
             target="_blank"
             rel="noreferrer"
-            aria-label="Abrir gFinance no GitHub"
+            aria-label="Abrir Econva no GitHub"
           >
             <Github size={18} />
           </a>

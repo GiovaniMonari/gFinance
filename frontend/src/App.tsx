@@ -1,107 +1,93 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react'
 import {
-  ArrowDownLeft,
-  ArrowUpRight,
-  BarChart2,
-  Calendar,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  Copy,
-  Download,
-  Edit3,
-  FileText,
-  FolderPlus,
-  History,
-  LogOut,
-  MinusCircle,
-  Plus,
-  PlusCircle,
-  Repeat,
-  Sparkles,
-  Tag,
+  ArrowRight,
+  Brain,
+  CheckCircle2,
+  Github,
+  Receipt,
+  ShieldCheck,
+  Smartphone,
   Target,
   Trash2,
   TrendingDown,
   TrendingUp,
+  WalletCards,
   X,
 } from 'lucide-react'
-import {
-  api,
-  Category,
-  ExpenseByCategory,
-  FinancialGoal,
-  FinancialGoalTransaction,
-  FinancialSummary,
-  MonthlySummary,
-  RecurringExpense,
-  Transaction,
-  TransactionType,
-  finance,
-} from './api'
+import './App.css'
 
-const money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
-const date = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
-const labels: Record<TransactionType, string> = {
-  INCOME: 'Receita',
-  EXPENSE: 'Despesa',
-  DEPOSIT: 'Depósito',
-}
+const features = [
+  {
+    icon: Receipt,
+    title: 'Scanner de recibos',
+    description:
+      'Capture seus recibos e transforme informações de compras em dados financeiros organizados.',
+  },
+  {
+    icon: Brain,
+    title: 'Inteligência financeira',
+    description:
+      'Análises inteligentes ajudam a entender seus gastos e encontrar oportunidades para melhorar suas decisões.',
+  },
+  {
+    icon: Target,
+    title: 'Metas financeiras',
+    description:
+      'Defina objetivos, acompanhe seu progresso e tenha uma visão clara da sua evolução financeira.',
+  },
+  {
+    icon: Wallet,
+    title: 'Open Finance',
+    description:
+      'Uma visão mais completa das suas finanças através da integração com instituições financeiras.',
+  },
+  {
+    icon: Zap,
+    title: 'Tempo real',
+    description:
+      'Atualizações rápidas para acompanhar suas informações financeiras sem depender de atualizações manuais.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Privacidade',
+    description:
+      'Arquitetura pensada para manter os dados financeiros separados e protegidos.',
+  },
+]
 
-function formatMonth(monthStr: string) {
-  const [year, month] = monthStr.split('-')
-  if (!year || !month) return monthStr
-  const dateObj = new Date(Number(year), Number(month) - 1, 1)
-  const monthName = dateObj.toLocaleDateString('pt-BR', { month: 'short' })
-  return `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`
-}
+const technologies = [
+  'React Native',
+  'NestJS',
+  'TypeScript',
+  'PostgreSQL',
+  'Redis',
+  'GraphQL',
+  'WebSocket',
+  'Open Finance',
+]
 
-// ── PWA install hook ──────────────────────────────────────────────────────────
-type DeferredPrompt = Event & { prompt: () => Promise<void> }
+const expenseBars = [
+  {
+    label: 'Moradia',
+    width: '72%',
+  },
+  {
+    label: 'Alimentação',
+    width: '54%',
+  },
+  {
+    label: 'Transporte',
+    width: '31%',
+  },
+]
 
-function usePWAInstall() {
-  const isStandalone =
-    window.matchMedia('(display-mode: standalone)').matches ||
-    (navigator as Navigator & { standalone?: boolean }).standalone === true
-
-  const [deferredPrompt, setDeferredPrompt] = useState<DeferredPrompt | null>(null)
-  const [installed, setInstalled] = useState(isStandalone)
-
-  useEffect(() => {
-    const onBeforeInstall = (e: Event) => {
-      e.preventDefault()
-      setDeferredPrompt(e as DeferredPrompt)
-    }
-    const onInstalled = () => {
-      setInstalled(true)
-      setDeferredPrompt(null)
-    }
-    window.addEventListener('beforeinstallprompt', onBeforeInstall)
-    window.addEventListener('appinstalled', onInstalled)
-    return () => {
-      window.removeEventListener('beforeinstallprompt', onBeforeInstall)
-      window.removeEventListener('appinstalled', onInstalled)
-    }
-  }, [])
-
-  const triggerInstall = async () => {
-    if (!deferredPrompt) return
-    await deferredPrompt.prompt()
-    setDeferredPrompt(null)
-  }
-
-  const showBanner = !!deferredPrompt && !installed
-  return { showBanner, triggerInstall }
-}
-
-function InstallBanner({ onInstall, onDismiss }: { onInstall: () => void; onDismiss: () => void }) {
+function App() {
   return (
     <div className="pwa-banner">
       <span className="pwa-banner-icon">
-        <img src="/logo-mark.png" alt="" />
+        <WalletCards size={18} />
       </span>
       <div className="pwa-banner-text">
-        <strong>Instale o Econva</strong>
+        <strong>Instale o gFinance</strong>
         <small>Acesse rápido, sem o navegador</small>
       </div>
       <div className="pwa-banner-actions">
@@ -171,8 +157,10 @@ function Auth({ onSuccess }: { onSuccess: (token: string) => void }) {
     <main className="auth-shell">
       <section className="auth-art">
         <div className="brand">
-          <img className="brand-mark" src="/logo-mark.png" alt="" />
-          <span>Econva</span>
+          <span className="brand-mark">
+            <WalletCards size={20} />
+          </span>
+          <span>gFinance</span>
         </div>
         <div className="art-copy">
           <p className="eyebrow">FINANÇAS, DO SEU JEITO</p>
@@ -188,8 +176,10 @@ function Auth({ onSuccess }: { onSuccess: (token: string) => void }) {
       <section className="auth-form-wrap">
         <div className="auth-form">
           <div className="mobile-brand brand">
-            <img className="brand-mark" src="/logo-mark.png" alt="" />
-            <span>Econva</span>
+            <span className="brand-mark">
+              <WalletCards size={20} />
+            </span>
+            <span>gFinance</span>
           </div>
           <p className="eyebrow">{register ? 'COMECE AGORA' : 'BEM-VINDO DE VOLTA'}</p>
           <h2>{register ? 'Crie sua conta' : 'Acesse sua Conta'}</h2>
@@ -323,8 +313,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     <main className="app-shell">
       <header className="topbar">
         <div className="brand">
-          <img className="brand-mark" src="/logo-mark.png" alt="" />
-          <span>Econva</span>
+          <span className="brand-mark">
+            <WalletCards size={20} />
+          </span>
+          <span>gFinance</span>
         </div>
         <div className="top-actions">
           <span className="status">
@@ -347,49 +339,26 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
         </div>
 
-        {error && <div className="error page-error">{error}</div>}
-        {message && (
-          <div className="toast">
-            <Check size={16} /> {message}
-          </div>
-        )}
+          {/* =================================================
+              PHONE MOCKUP
+          ================================================== */}
+          <div className="phone-wrapper">
+            <div className="phone">
+              <div className="phone-camera" />
 
-        <section className="balance-grid">
-          <div className="balance-card">
-            <div className="card-heading">
-              <span>Saldo disponível</span>
-              <span className="balance-icon">
-                <Sparkles size={17} />
-              </span>
-            </div>
-            <strong className="balance">{money.format(availableBalance)}</strong>
-            <div className="balance-foot">
-              <span>Balanço total acumulado</span>
-              <span className="positive">+{money.format(totalIncome + totalDeposits + monthlyIncome)} total bruto</span>
-            </div>
-          </div>
+              <div className="phone-screen">
+                <div className="mock-header">
+                  <span>Olá!</span>
 
-          <div className="stat-card">
-            <span className="stat-icon green">
-              <TrendingUp size={18} />
-            </span>
-            <div>
-              <span>Receitas</span>
-              <strong>{money.format(totalIncome + totalDeposits + monthlyIncome)}</strong>
-              <small>Total de ganhos</small>
-            </div>
-          </div>
+                  <span className="mock-avatar">
+                    <Wallet size={14} />
+                  </span>
+                </div>
 
-          <div className="stat-card">
-            <span className="stat-icon red">
-              <TrendingDown size={18} />
-            </span>
-            <div>
-              <span>Despesas</span>
-              <strong className="negative">{money.format(totalExpenses)}</strong>
-              <small>Total gasto</small>
-            </div>
-          </div>
+                <div className="mock-balance">
+                  <small>Saldo disponível</small>
+                  <strong>R$ 4.280,00</strong>
+                </div>
 
           <div className="stat-card clickable" onClick={() => setModal('MONTHLY_INCOME')}>
             <span className="stat-icon purple">
@@ -439,7 +408,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <ArrowUpRight className="action-arrow" size={17} />
             </button>
             <button onClick={() => setModal('CATEGORIES')}>
-              <span className="action-icon utility">
+              <span className="action-icon category-action">
                 <FolderPlus />
               </span>
               <span>
@@ -449,7 +418,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <ArrowUpRight className="action-arrow" size={17} />
             </button>
             <button onClick={() => setModal('RECURRING_EXPENSES')}>
-              <span className="action-icon utility">
+              <span className="action-icon category-action" style={{ background: '#fef3c7', color: '#d97706' }}>
                 <Repeat />
               </span>
               <span>
@@ -459,7 +428,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <ArrowUpRight className="action-arrow" size={17} />
             </button>
             <button onClick={() => setModal('FINANCIAL_GOALS')}>
-              <span className="action-icon utility">
+              <span className="action-icon category-action" style={{ background: '#e0e7ff', color: '#4338ca' }}>
                 <Target />
               </span>
               <span>
@@ -469,7 +438,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <ArrowUpRight className="action-arrow" size={17} />
             </button>
             <button onClick={() => setModal('REPORT')}>
-              <span className="action-icon utility">
+              <span className="action-icon category-action" style={{ background: '#fce7f3', color: '#be185d' }}>
                 <FileText />
               </span>
               <span>
@@ -540,7 +509,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                           className="progress-fill"
                           style={{
                             width: `${Math.min(goal.progress, 100)}%`,
-                            background: goal.status === 'COMPLETED' ? 'var(--income)' : goal.status === 'OVERDUE' ? 'var(--expense)' : 'var(--accent)',
+                            background: goal.status === 'COMPLETED' ? '#2fac77' : goal.status === 'OVERDUE' ? '#e04f5f' : '#6366f1',
                           }}
                         />
                       </div>
@@ -620,196 +589,27 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 </div>
               )}
             </div>
-          </section>
-        )}
-
-        <section className="transactions">
-          <div className="section-heading">
-            <div>
-              <h3>Atividade recente</h3>
-              <p className="muted">Acompanhe suas últimas movimentações</p>
-            </div>
-            <span className="transaction-count">{transactions.length} registros nesta página</span>
           </div>
-          <div className="table">
-            {loading ? (
-              <div className="empty">Carregando transações...</div>
-            ) : transactions.length === 0 ? (
-              <div className="empty">Você ainda não possui movimentações.</div>
-            ) : (
-              transactions.map((transaction) => (
-                <TransactionRow
-                  key={transaction.id}
-                  transaction={transaction}
-                  categoryName={
-                    transaction.category?.name ?? (transaction.categoryId ? categoryMap.get(transaction.categoryId) : undefined)
-                  }
-                />
-              ))
-            )}
+        </div>
+      </section>
+
+      {/* =====================================================
+          FEATURES
+      ====================================================== */}
+      <section className="section" id="features">
+        <div className="container">
+          <div className="section-heading center">
+            <h2>Mais do que controlar gastos.</h2>
+
+            <p>
+              O gFinance V2 foi pensado para transformar dados financeiros
+              em informações que realmente ajudam nas suas decisões.
+            </p>
           </div>
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-                <ChevronLeft size={16} />
-              </button>
-              <span>
-                Página {page} de {totalPages}
-              </span>
-              <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          )}
-        </section>
-      </div>
 
-      {modal === 'INCOME' || modal === 'EXPENSE' || modal === 'DEPOSIT' ? (
-        <TransactionModal
-          type={modal}
-          categories={categories}
-          onClose={() => setModal(null)}
-          onCreated={() => {
-            setModal(null)
-            refresh()
-          }}
-          onOpenCategories={() => setModal('CATEGORIES')}
-        />
-      ) : null}
-
-      {modal === 'CATEGORIES' && (
-        <CategoriesModal
-          categories={categories}
-          onClose={() => setModal(null)}
-          onChanged={() => {
-            refresh()
-          }}
-        />
-      )}
-
-      {modal === 'MONTHLY_INCOME' && (
-        <MonthlyIncomeModal
-          currentIncome={monthlyIncome}
-          onClose={() => setModal(null)}
-          onSaved={() => {
-            setModal(null)
-            refresh()
-          }}
-        />
-      )}
-
-      {modal === 'RECURRING_EXPENSES' && (
-        <RecurringExpensesModal
-          categories={categories}
-          recurringExpenses={recurringExpenses}
-          onClose={() => setModal(null)}
-          onChanged={() => {
-            refresh()
-          }}
-          onOpenCategories={() => setModal('CATEGORIES')}
-        />
-      )}
-
-      {modal === 'FINANCIAL_GOALS' && (
-        <FinancialGoalsModal
-          goals={financialGoals}
-          onClose={() => setModal(null)}
-          onChanged={() => {
-            refresh()
-          }}
-        />
-      )}
-
-      {modal === 'REPORT' && (
-        <ReportModal onClose={() => setModal(null)} />
-      )}
-    </main>
-  )
-}
-
-function TransactionRow({ transaction, categoryName }: { transaction: Transaction; categoryName?: string }) {
-  const isIncome = transaction.type === 'INCOME' || transaction.type === 'DEPOSIT'
-  const iconClass = transaction.type.toLowerCase()
-
-  return (
-    <div className="transaction-row">
-      <span className={`tx-icon ${iconClass}`}>
-        {transaction.type === 'INCOME' ? (
-          <ArrowDownLeft size={17} />
-        ) : transaction.type === 'EXPENSE' ? (
-          <ArrowUpRight size={17} />
-        ) : (
-          <Sparkles size={17} />
-        )}
-      </span>
-      <div className="tx-description">
-        <strong>
-          {transaction.description || labels[transaction.type]}
-          {categoryName && <span className="category-tag">{categoryName}</span>}
-        </strong>
-        <small>{date.format(new Date(transaction.createdAt))}</small>
-      </div>
-      <span className={`tx-status ${transaction.status.toLowerCase()}`}>
-        {transaction.status === 'COMPLETED'
-          ? 'Concluído'
-          : transaction.status === 'PENDING'
-          ? 'Pendente'
-          : 'Falhou'}
-      </span>
-      <strong className={isIncome ? 'tx-value positive' : 'tx-value negative'}>
-        {isIncome ? '+' : '-'}
-        {money.format(Number(transaction.amount))}
-      </strong>
-    </div>
-  )
-}
-
-function TransactionModal({
-  type,
-  categories,
-  onClose,
-  onCreated,
-  onOpenCategories,
-}: {
-  type: TransactionType
-  categories: Category[]
-  onClose: () => void
-  onCreated: () => void
-  onOpenCategories: () => void
-}) {
-  const [amount, setAmount] = useState('')
-  const [description, setDescription] = useState('')
-  const [categoryId, setCategoryId] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  async function submit(event: FormEvent) {
-    event.preventDefault()
-    setError('')
-
-    if (type === 'EXPENSE' && !categoryId) {
-      setError('Por favor, selecione uma categoria para a despesa.')
-      return
-    }
-
-    setLoading(true)
-    try {
-      await api.createTransaction({
-        amount: Number(amount),
-        transactionType: type,
-        description: description || undefined,
-        categoryId: categoryId || undefined,
-      })
-      onCreated()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível registrar a transação.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const title =
-    type === 'INCOME' ? 'Registrar receita' : type === 'EXPENSE' ? 'Registrar despesa' : 'Adicionar depósito'
+          <div className="features-grid">
+            {features.map((feature) => {
+              const Icon = feature.icon
 
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
@@ -999,7 +799,7 @@ function CategoriesModal({
                     <>
                       <button
                         className="icon-button"
-                        style={{ color: 'var(--text-tertiary)' }}
+                        style={{ color: '#636b7e' }}
                         title="Editar"
                         onClick={() => {
                           setEditingId(c.id)
@@ -1010,7 +810,7 @@ function CategoriesModal({
                       </button>
                       <button
                         className="icon-button"
-                        style={{ color: 'var(--expense)' }}
+                        style={{ color: '#e04f5f' }}
                         title="Excluir"
                         onClick={() => handleDelete(c.id)}
                         disabled={loading}
@@ -1345,7 +1145,7 @@ function RecurringExpensesModal({
                       <strong>{money.format(Number(re.amount))}</strong>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: 'var(--text-tertiary)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: '#636b7e' }}>
                       <span>Cobrança todo dia {re.dayOfMonth} {re.nextExecution ? `(Próx: ${date.format(new Date(re.nextExecution))})` : ''}</span>
                       <div className="category-actions" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <span className={`tx-status ${re.active ? 'completed' : 'failed'}`}>
@@ -1361,7 +1161,7 @@ function RecurringExpensesModal({
                         </button>
                         <button
                           className="icon-button"
-                          style={{ color: 'var(--text-tertiary)' }}
+                          style={{ color: '#636b7e' }}
                           title="Editar"
                           onClick={() => {
                             setEditingId(re.id)
@@ -1375,7 +1175,7 @@ function RecurringExpensesModal({
                         </button>
                         <button
                           className="icon-button"
-                          style={{ color: 'var(--expense)' }}
+                          style={{ color: '#e04f5f' }}
                           title="Excluir"
                           onClick={() => handleDelete(re.id)}
                           disabled={loading}
@@ -1659,7 +1459,7 @@ function FinancialGoalsModal({
                         <div>
                           <strong style={{ fontSize: 14 }}>{g.name}</strong>
                           {g.deadline && (
-                            <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                            <div style={{ fontSize: 11, color: '#636b7e', marginTop: 2 }}>
                               Prazo: {date.format(new Date(g.deadline))}
                             </div>
                           )}
@@ -1669,7 +1469,7 @@ function FinancialGoalsModal({
 
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                         <span>Acumulado: <strong>{money.format(current)}</strong></span>
-                        <span style={{ color: 'var(--text-tertiary)' }}>Alvo: {money.format(target)}</span>
+                        <span style={{ color: '#636b7e' }}>Alvo: {money.format(target)}</span>
                       </div>
 
                       <div className="progress-track" style={{ height: 8 }}>
@@ -1677,17 +1477,17 @@ function FinancialGoalsModal({
                           className="progress-fill"
                           style={{
                             width: `${Math.min(g.progress, 100)}%`,
-                            background: g.status === 'COMPLETED' ? 'var(--income)' : g.status === 'OVERDUE' ? 'var(--expense)' : 'var(--accent)',
+                            background: g.status === 'COMPLETED' ? '#2fac77' : g.status === 'OVERDUE' ? '#e04f5f' : '#6366f1',
                           }}
                         />
                       </div>
 
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: 'var(--text-tertiary)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: '#636b7e' }}>
                         <span>{g.progress}% concluído</span>
                         <div className="category-actions" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           <button
                             className="button secondary"
-                            style={{ padding: '4px 8px', fontSize: 11, background: 'var(--income-subtle)', color: 'var(--income)' }}
+                            style={{ padding: '4px 8px', fontSize: 11, background: '#e7f8f0', color: '#2fac77' }}
                             title="Aportar valor"
                             onClick={() => {
                               setActionGoalId(g.id)
@@ -1699,7 +1499,7 @@ function FinancialGoalsModal({
                           </button>
                           <button
                             className="button secondary"
-                            style={{ padding: '4px 8px', fontSize: 11, background: 'var(--expense-subtle)', color: 'var(--expense)' }}
+                            style={{ padding: '4px 8px', fontSize: 11, background: '#fff0f0', color: '#e04f5f' }}
                             title="Resgatar valor"
                             onClick={() => {
                               setActionGoalId(g.id)
@@ -1711,7 +1511,7 @@ function FinancialGoalsModal({
                           </button>
                           <button
                             className="icon-button"
-                            style={{ color: 'var(--text-tertiary)' }}
+                            style={{ color: '#636b7e' }}
                             title="Histórico"
                             onClick={() => handleToggleHistory(g.id)}
                           >
@@ -1719,7 +1519,7 @@ function FinancialGoalsModal({
                           </button>
                           <button
                             className="icon-button"
-                            style={{ color: 'var(--text-tertiary)' }}
+                            style={{ color: '#636b7e' }}
                             title="Editar"
                             onClick={() => {
                               setEditingId(g.id)
@@ -1732,7 +1532,7 @@ function FinancialGoalsModal({
                           </button>
                           <button
                             className="icon-button"
-                            style={{ color: 'var(--expense)' }}
+                            style={{ color: '#e04f5f' }}
                             title="Excluir"
                             onClick={() => handleDelete(g.id)}
                             disabled={loading}
@@ -1743,7 +1543,7 @@ function FinancialGoalsModal({
                       </div>
 
                       {actionGoalId === g.id && (
-                        <form onSubmit={handleProgressSubmit} style={{ marginTop: 8, padding: '10px', background: 'var(--surface)', borderRadius: 8 }}>
+                        <form onSubmit={handleProgressSubmit} style={{ marginTop: 8, padding: '10px', background: '#f0f2f8', borderRadius: 8 }}>
                           <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
                             {actionType === 'DEPOSIT' ? 'Adicionar Aporte (Depósito)' : 'Resgatar Valor (Retirada)'}
                           </div>
@@ -1774,32 +1574,32 @@ function FinancialGoalsModal({
                       )}
 
                       {historyGoalId === g.id && (
-                        <div style={{ marginTop: 8, padding: '10px', background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
+                        <div style={{ marginTop: 8, padding: '10px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
                           <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 6, display: 'flex', justifyContent: 'space-between' }}>
                             <span>Histórico de Movimentações</span>
                             <button
                               type="button"
-                              style={{ background: 'none', border: 0, fontSize: 11, color: 'var(--text-tertiary)', cursor: 'pointer' }}
+                              style={{ background: 'none', border: 0, fontSize: 11, color: '#636b7e', cursor: 'pointer' }}
                               onClick={() => setHistoryGoalId(null)}
                             >
                               Fechar
                             </button>
                           </div>
                           {loadingHistory ? (
-                            <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>Carregando histórico...</div>
+                            <div style={{ fontSize: 12, color: '#636b7e' }}>Carregando histórico...</div>
                           ) : historyTransactions.length === 0 ? (
-                            <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>Nenhuma movimentação registrada nesta meta.</div>
+                            <div style={{ fontSize: 12, color: '#636b7e' }}>Nenhuma movimentação registrada nesta meta.</div>
                           ) : (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 150, overflowY: 'auto' }}>
                               {historyTransactions.map((tx) => (
-                                <div key={tx.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, padding: '4px 0', borderBottom: '1px dashed var(--border)' }}>
+                                <div key={tx.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, padding: '4px 0', borderBottom: '1px dashed #e2e8f0' }}>
                                   <span>
                                     {tx.type === 'DEPOSIT' ? (
-                                      <span style={{ color: 'var(--income)', fontWeight: 600 }}>+ Aporte</span>
+                                      <span style={{ color: '#2fac77', fontWeight: 600 }}>+ Aporte</span>
                                     ) : (
-                                      <span style={{ color: 'var(--expense)', fontWeight: 600 }}>- Resgate</span>
+                                      <span style={{ color: '#e04f5f', fontWeight: 600 }}>- Resgate</span>
                                     )}{' '}
-                                    <small style={{ color: 'var(--text-secondary)' }}>({date.format(new Date(tx.createdAt))})</small>
+                                    <small style={{ color: '#94a3b8' }}>({date.format(new Date(tx.createdAt))})</small>
                                   </span>
                                   <strong>{money.format(Number(tx.amount))}</strong>
                                 </div>
@@ -1822,9 +1622,9 @@ function FinancialGoalsModal({
 
 // ── Chart: Bar ───────────────────────────────────────────────────────────────
 const CHART_COLORS = {
-  income: 'var(--income)',
-  expenses: 'var(--expense)',
-  deposits: 'var(--accent)',
+  income: '#2fac77',
+  expenses: '#e04f5f',
+  deposits: '#6366f1',
 }
 
 function BarChart({ income, expenses, deposits }: { income: number; expenses: number; deposits: number }) {
@@ -1852,7 +1652,7 @@ function BarChart({ income, expenses, deposits }: { income: number; expenses: nu
             key={pct}
             x1={0} y1={H * (1 - pct)}
             x2={W} y2={H * (1 - pct)}
-            style={{ stroke: 'var(--border)' }} strokeWidth={1}
+            stroke="#e9ebf2" strokeWidth={1}
           />
         ))}
         {bars.map((bar, i) => {
@@ -1864,17 +1664,17 @@ function BarChart({ income, expenses, deposits }: { income: number; expenses: nu
               <rect
                 x={x} y={y}
                 width={barW} height={barH}
-                rx={6} style={{ fill: bar.color }} opacity={0.88}
+                rx={6} fill={bar.color} opacity={0.88}
                 className="chart-bar"
               >
                 <title>{bar.label}: {money.format(bar.value)}</title>
               </rect>
               {bar.value > 0 && (
-                <text x={x + barW / 2} y={y - 5} textAnchor="middle" fontSize={9} style={{ fill: bar.color }} fontWeight={700}>
+                <text x={x + barW / 2} y={y - 5} textAnchor="middle" fontSize={9} fill={bar.color} fontWeight={700}>
                   {money.format(bar.value)}
                 </text>
               )}
-              <text x={x + barW / 2} y={H + 16} textAnchor="middle" fontSize={10} style={{ fill: 'var(--text-tertiary)' }}>
+              <text x={x + barW / 2} y={H + 16} textAnchor="middle" fontSize={10} fill="#7f879d">
                 {bar.label}
               </text>
             </g>
@@ -1921,12 +1721,12 @@ function LineChart({ data, monthlyIncome }: { data: MonthlySummary[]; monthlyInc
       <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" aria-label="Gráfico de evolução mensal">
         <defs>
           <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" style={{ stopColor: CHART_COLORS.income, stopOpacity: 0.28 }} />
-            <stop offset="100%" style={{ stopColor: CHART_COLORS.income, stopOpacity: 0.01 }} />
+            <stop offset="0%" stopColor={CHART_COLORS.income} stopOpacity={0.28} />
+            <stop offset="100%" stopColor={CHART_COLORS.income} stopOpacity={0.01} />
           </linearGradient>
           <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" style={{ stopColor: CHART_COLORS.expenses, stopOpacity: 0.22 }} />
-            <stop offset="100%" style={{ stopColor: CHART_COLORS.expenses, stopOpacity: 0.01 }} />
+            <stop offset="0%" stopColor={CHART_COLORS.expenses} stopOpacity={0.22} />
+            <stop offset="100%" stopColor={CHART_COLORS.expenses} stopOpacity={0.01} />
           </linearGradient>
         </defs>
 
@@ -1936,7 +1736,7 @@ function LineChart({ data, monthlyIncome }: { data: MonthlySummary[]; monthlyInc
             key={pct}
             x1={padding.left} y1={padding.top + pct * innerH}
             x2={W - padding.right} y2={padding.top + pct * innerH}
-            style={{ stroke: 'var(--border)' }} strokeWidth={1}
+            stroke="#e9ebf2" strokeWidth={1}
           />
         ))}
 
@@ -1951,24 +1751,24 @@ function LineChart({ data, monthlyIncome }: { data: MonthlySummary[]; monthlyInc
         {/* Lines */}
         {months.length > 1 && (
           <>
-            <path d={toPath(incomeVals)} fill="none" style={{ stroke: CHART_COLORS.income }} strokeWidth={2} strokeLinejoin="round" />
-            <path d={toPath(expenseVals)} fill="none" style={{ stroke: CHART_COLORS.expenses }} strokeWidth={2} strokeLinejoin="round" />
+            <path d={toPath(incomeVals)} fill="none" stroke={CHART_COLORS.income} strokeWidth={2} strokeLinejoin="round" />
+            <path d={toPath(expenseVals)} fill="none" stroke={CHART_COLORS.expenses} strokeWidth={2} strokeLinejoin="round" />
           </>
         )}
 
         {/* Dots + tooltip */}
         {months.map((m, i) => (
           <g key={m.month}>
-            <circle cx={xPos(i)} cy={yPos(incomeVals[i])} r={3.5} style={{ fill: CHART_COLORS.income, stroke: 'var(--canvas)' }} strokeWidth={1.5}>
+            <circle cx={xPos(i)} cy={yPos(incomeVals[i])} r={3.5} fill={CHART_COLORS.income} stroke="#fff" strokeWidth={1.5}>
               <title>{formatMonth(m.month)} — Receitas: {money.format(incomeVals[i])}</title>
             </circle>
-            <circle cx={xPos(i)} cy={yPos(expenseVals[i])} r={3.5} style={{ fill: CHART_COLORS.expenses, stroke: 'var(--canvas)' }} strokeWidth={1.5}>
+            <circle cx={xPos(i)} cy={yPos(expenseVals[i])} r={3.5} fill={CHART_COLORS.expenses} stroke="#fff" strokeWidth={1.5}>
               <title>{formatMonth(m.month)} — Despesas: {money.format(expenseVals[i])}</title>
             </circle>
             {/* X labels */}
             <text
               x={xPos(i)} y={H - 4}
-              textAnchor="middle" fontSize={9} style={{ fill: 'var(--text-tertiary)' }}
+              textAnchor="middle" fontSize={9} fill="#7f879d"
             >
               {formatMonth(m.month).split(' ')[0]}
             </text>
@@ -1984,16 +1784,7 @@ function LineChart({ data, monthlyIncome }: { data: MonthlySummary[]; monthlyInc
 }
 
 // ── Chart: Donut ──────────────────────────────────────────────────────────────
-const DONUT_PALETTE = [
-  'var(--accent)',
-  'var(--accent-bright)',
-  'var(--accent-deep)',
-  'var(--warning)',
-  'var(--income)',
-  'var(--expense)',
-  'var(--text-secondary)',
-  'var(--text-tertiary)',
-]
+const DONUT_PALETTE = ['#6366f1', '#2fac77', '#e04f5f', '#f59e0b', '#06b6d4', '#8b5cf6', '#ec4899', '#10b981']
 
 function DonutChart({ data, total }: { data: ExpenseByCategory[]; total: number }) {
   const R = 54
@@ -2014,13 +1805,13 @@ function DonutChart({ data, total }: { data: ExpenseByCategory[]; total: number 
     <div className="chart-container donut-layout">
       <svg viewBox={`0 0 160 140`} className="chart-svg donut-svg" aria-label="Gráfico de despesas por categoria">
         {/* Background circle */}
-        <circle cx={CX} cy={CY} r={R} fill="none" style={{ stroke: 'var(--border-strong)' }} strokeWidth={strokeW} />
+        <circle cx={CX} cy={CY} r={R} fill="none" stroke="#f0f2f8" strokeWidth={strokeW} />
         {slices.map((s) => (
           <circle
             key={s.cat.categoryId}
             cx={CX} cy={CY} r={R}
             fill="none"
-            style={{ stroke: s.color }}
+            stroke={s.color}
             strokeWidth={strokeW}
             strokeDasharray={`${circumference * s.pct} ${circumference * (1 - s.pct)}`}
             strokeDashoffset={s.offset}
@@ -2032,8 +1823,8 @@ function DonutChart({ data, total }: { data: ExpenseByCategory[]; total: number 
           </circle>
         ))}
         {/* Center label */}
-        <text x={CX} y={CY - 6} textAnchor="middle" fontSize={9} style={{ fill: 'var(--text-secondary)' }}>Total</text>
-        <text x={CX} y={CY + 8} textAnchor="middle" fontSize={11} style={{ fill: 'var(--text-primary)' }} fontWeight={700}>
+        <text x={CX} y={CY - 6} textAnchor="middle" fontSize={9} fill="#7f879d">Total</text>
+        <text x={CX} y={CY + 8} textAnchor="middle" fontSize={11} fill="#172039" fontWeight={700}>
           {total >= 1000 ? `${(total / 1000).toFixed(1)}k` : money.format(total)}
         </text>
       </svg>
@@ -2101,28 +1892,24 @@ function ReportModal({ onClose }: { onClose: () => void }) {
             </label>
           </div>
 
-          <div className="report-info">
-            <FileText size={15} />
-            <span>
-              {startDate || endDate
-                ? `Período: ${startDate ? new Date(startDate + 'T12:00:00').toLocaleDateString('pt-BR') : 'início'} até ${endDate ? new Date(endDate + 'T12:00:00').toLocaleDateString('pt-BR') : 'hoje'}`
-                : 'Sem filtro de data: o relatório incluirá todas as transações.'}
-            </span>
-          </div>
+            <span>gFinance V2</span>
+          </a>
 
-          {error && <div className="error">{error}</div>}
-          {success && (
-            <div className="toast" style={{ position: 'static', marginBottom: 12, justifyContent: 'center' }}>
-              <Check size={16} /> PDF gerado e baixado com sucesso!
-            </div>
-          )}
+          <span>
+            Projeto desenvolvido por Giovani Monari
+          </span>
 
-          <button className="button primary full" disabled={loading}>
-            {loading ? 'Gerando PDF...' : 'Gerar e Baixar PDF'} <Download size={17} />
-          </button>
-        </form>
-      </div>
-    </div>
+          <a
+            href="https://github.com/GiovaniMonari"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Abrir gFinance no GitHub"
+          >
+            <Github size={18} />
+          </a>
+        </div>
+      </footer>
+    </main>
   )
 }
 

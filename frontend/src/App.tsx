@@ -366,7 +366,8 @@ function App() {
 
           <a
             className="download-button"
-            href="/gfinance-v2.apk"
+            href="/econva.apk"
+            download="econva.apk"
           >
             Baixar APK
             <ArrowRight size={19} />

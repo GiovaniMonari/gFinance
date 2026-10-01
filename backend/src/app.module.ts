@@ -14,6 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { OpenFinanceModule } from './open-finance/open-finance.module';
 import { EmailModule } from './email/email.module';
 import { UsersModule } from './users/users.module';
+import { ReceiptsModule } from './receipts/receipts.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { UsersModule } from './users/users.module';
     FinancialReportsModule,
     EmailModule,
     OpenFinanceModule,
+    ReceiptsModule
   ],
   providers: [
     /*

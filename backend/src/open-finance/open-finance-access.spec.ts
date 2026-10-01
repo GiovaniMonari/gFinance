@@ -7,8 +7,8 @@ import {
 
 /**
  * The whole restriction is this predicate plus one exempt list, so this is
- * where the behaviour described in the brief is pinned: a new account is
- * blocked, an existing link is untouched, and one address keeps full access.
+ * where the behaviour is pinned: every app account is blocked while the
+ * feature is closed, and one address keeps full access.
  */
 describe('Open Finance access policy', () => {
   beforeEach(() => {
@@ -37,9 +37,9 @@ describe('Open Finance access policy', () => {
     );
   });
 
-  it('leaves an account that already has a link working', () => {
+  it('blocks an app account even when it still holds a link', () => {
     expect(canConnect({ email: 'antiga@email.com', hasConnection: true })).toBe(
-      true,
+      false,
     );
   });
 

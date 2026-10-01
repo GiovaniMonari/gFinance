@@ -67,7 +67,7 @@ export class OpenFinanceController {
     }
 
   @Get('connections')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, OpenFinanceAccessGuard)
   async getConnections(
     @Req() req: { user?: { id: string } },
   ) {
@@ -81,7 +81,7 @@ export class OpenFinanceController {
   }
 
   @Delete('connections/:connectionId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, OpenFinanceAccessGuard)
   async disconnect(
     @Req() req: { user?: { id: string } },
     @Param('connectionId') connectionId: string,
@@ -97,7 +97,7 @@ export class OpenFinanceController {
   }
 
   @Get('connections/:connectionId/accounts')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, OpenFinanceAccessGuard)
   async getAccounts(
     @Req() req: { user?: { id: string } },
     @Param('connectionId') connectionId: string,
@@ -115,7 +115,7 @@ export class OpenFinanceController {
   @Get(
   'connections/:connectionId/accounts/:accountId/transactions',
 )
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OpenFinanceAccessGuard)
   async getTransactions(
     @Req() req: { user?: { id: string } },
     @Param('connectionId') connectionId: string,

@@ -13,14 +13,14 @@ import { OpenFinanceAccessService } from './open-finance-access.service';
  *
  * Placed **after** `JwtAuthGuard` in `@UseGuards(JwtAuthGuard, …)`, so by the
  * time it runs the request already carries `req.user` and an unauthenticated
- * call has been turned away. It guards the two routes that begin a
- * connection — the connect token and the item exchange — and nothing else:
- * reading a connection, or ending one, is never something a restriction
- * should stand in front of.
+ * call has been turned away. While the feature is closed for app users it
+ * guards every route that touches Open Finance except `GET /status` — the
+ * endpoint that tells the screen the flow is unavailable must stay readable
+ * so the restriction reads as a stated fact rather than a hanging request.
  *
  * Removing the restriction later is `OPEN_FINANCE_RELEASED = true` in
  * `open-finance-access.ts`; removing the mechanism itself is dropping the
- * guard from those two decorators.
+ * guard from those decorators.
  */
 @Injectable()
 export class OpenFinanceAccessGuard implements CanActivate {

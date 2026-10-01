@@ -41,8 +41,11 @@ export const OPEN_FINANCE_TEST_ACCOUNTS: readonly string[] = [
 export type OpenFinanceAccess = {
   /** The signed-in user's email, or `null` when it could not be read. */
   email: string | null;
-  /** Whether the user still holds an Open Finance link. */
-  hasConnection: boolean;
+  /**
+   * Unused while the feature is closed for app users. Kept optional so
+   * existing callers keep compiling; it grants nothing.
+   */
+  hasConnection?: boolean;
 };
 
 /** Whether this account is on the exempt list. */
@@ -61,17 +64,16 @@ export function isOpenFinanceTestAccount(
 /**
  * The one decision, in one place.
  *
- * Order matters: the switch is answered before anything else, an exempt
- * account before the connection lookup, and an existing link before the
- * restriction — so every group in the intended behaviour is decided by the
- * clause that names it.
+ * While the feature is closed, only the release switch and the exempt list
+ * grant access — an existing link grants nothing. Order matters: the switch
+ * is answered before anything else, then the exempt account. Every other
+ * account is blocked, whether or not it holds a link.
  */
 export function canConnect({
   email,
-  hasConnection,
 }: OpenFinanceAccess): boolean {
   if (isOpenFinanceReleased()) return true;
   if (isOpenFinanceTestAccount(email)) return true;
 
-  return hasConnection;
+  return false;
 }

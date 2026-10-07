@@ -18,10 +18,10 @@ import {
 import './ResetPassword.css'
 
 const EXPIRED_LINK_MESSAGE =
-  'This password reset link is invalid or has expired. Please request a new one.'
-const GENERIC_ERROR_MESSAGE = 'Something went wrong. Please try again.'
+  'Este link de redefinição é inválido ou expirou. Solicite um novo.'
+const GENERIC_ERROR_MESSAGE = 'Algo deu errado. Tente novamente.'
 const NETWORK_ERROR_MESSAGE =
-  "We couldn't connect to the server. Please check your connection and try again."
+  'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.'
 
 type FieldErrors = {
   newPassword?: string
@@ -57,7 +57,7 @@ function toFriendlyErrorMessage(raw: unknown): string {
     normalized.includes('passwords do not match') ||
     normalized.includes('passwords must match')
   ) {
-    return 'Passwords do not match.'
+    return 'As senhas não coincidem.'
   }
 
   if (
@@ -65,7 +65,7 @@ function toFriendlyErrorMessage(raw: unknown): string {
     normalized.includes('at least 6') ||
     normalized.includes('minlength')
   ) {
-    return 'Password must be at least 6 characters.'
+    return 'A senha deve ter pelo menos 6 caracteres.'
   }
 
   if (
@@ -119,15 +119,15 @@ function ResetPassword() {
     const errors: FieldErrors = {}
 
     if (!newPassword) {
-      errors.newPassword = 'Password is required.'
+      errors.newPassword = 'Digite a nova senha.'
     } else if (newPassword.length < 6) {
-      errors.newPassword = 'Password must be at least 6 characters.'
+      errors.newPassword = 'A senha deve ter pelo menos 6 caracteres.'
     }
 
     if (!confirmPassword) {
-      errors.confirmPassword = 'Please confirm your password.'
+      errors.confirmPassword = 'Confirme a nova senha.'
     } else if (newPassword && confirmPassword !== newPassword) {
-      errors.confirmPassword = 'Passwords do not match.'
+      errors.confirmPassword = 'As senhas não coincidem.'
     }
 
     return errors
@@ -168,7 +168,7 @@ function ResetPassword() {
     <div className="reset-page">
       <header className="reset-topbar">
         <div className="container reset-topbar-content">
-          <a href="/" className="logo" aria-label="Econva home">
+          <a href="/" className="logo" aria-label="Página inicial do Econva">
             <img className="logo-mark" src="/logo-mark.png" alt="" />
             <span>Econva</span>
           </a>
@@ -181,17 +181,17 @@ function ResetPassword() {
             <section
               className="reset-success"
               aria-live="polite"
-              aria-label="Password reset successfully"
+              aria-label="Senha redefinida com sucesso"
             >
               <span className="reset-icon-badge reset-icon-badge-success">
                 <CheckCircle2 size={26} aria-hidden="true" />
               </span>
 
-              <h1>Password reset successfully</h1>
+              <h1>Senha redefinida com sucesso</h1>
 
               <p>
-                Your password has been changed. You can now sign in with
-                your new password in the Econva app.
+                Sua senha foi alterada. Agora você já pode entrar no app
+                Econva com a nova senha.
               </p>
 
               <a
@@ -199,12 +199,12 @@ function ResetPassword() {
                 href={ECONVA_LOGIN_DEEP_LINK}
               >
                 <Smartphone size={18} aria-hidden="true" />
-                Open Econva
+                Abrir o Econva
               </a>
 
               <p className="reset-redirect-hint">
-                Opening the Econva app to the login screen. If it does not
-                open automatically, tap the button above.
+                Abrindo o app Econva na tela de login. Se não abrir
+                automaticamente, toque no botão acima.
               </p>
             </section>
           ) : (
@@ -213,11 +213,11 @@ function ResetPassword() {
                 <Lock size={22} />
               </span>
 
-              <h1>Reset your password</h1>
+              <h1>Redefina sua senha</h1>
 
               <p className="reset-supporting">
-                Create a new password for your Econva account. After saving,
-                use it the next time you sign in.
+                Crie uma nova senha para sua conta Econva. Depois de salvar,
+                use-a no próximo login.
               </p>
 
               {missingToken ? (
@@ -236,7 +236,7 @@ function ResetPassword() {
 
               <form onSubmit={handleSubmit} noValidate>
                 <div className="reset-field">
-                  <label htmlFor="reset-new-password">New password</label>
+                  <label htmlFor="reset-new-password">Nova senha</label>
                   <div
                     className={`reset-input-wrap${fieldErrors.newPassword ? ' reset-input-wrap-error' : ''}`}
                   >
@@ -244,7 +244,7 @@ function ResetPassword() {
                       id="reset-new-password"
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
-                      placeholder="Enter your new password"
+                      placeholder="Digite sua nova senha"
                       value={newPassword}
                       disabled={isSubmitting || missingToken}
                       aria-invalid={Boolean(fieldErrors.newPassword)}
@@ -265,7 +265,7 @@ function ResetPassword() {
                       type="button"
                       className="reset-visibility-toggle"
                       aria-label={
-                        showPassword ? 'Hide password' : 'Show password'
+                        showPassword ? 'Ocultar senha' : 'Mostrar senha'
                       }
                       aria-pressed={showPassword}
                       disabled={isSubmitting || missingToken}
@@ -291,7 +291,7 @@ function ResetPassword() {
 
                 <div className="reset-field">
                   <label htmlFor="reset-confirm-password">
-                    Confirm new password
+                    Confirmar nova senha
                   </label>
                   <div
                     className={`reset-input-wrap${fieldErrors.confirmPassword ? ' reset-input-wrap-error' : ''}`}
@@ -300,7 +300,7 @@ function ResetPassword() {
                       id="reset-confirm-password"
                       type={showConfirmPassword ? 'text' : 'password'}
                       autoComplete="new-password"
-                      placeholder="Confirm your new password"
+                      placeholder="Digite a nova senha novamente"
                       value={confirmPassword}
                       disabled={isSubmitting || missingToken}
                       aria-invalid={Boolean(fieldErrors.confirmPassword)}
@@ -322,8 +322,8 @@ function ResetPassword() {
                       className="reset-visibility-toggle"
                       aria-label={
                         showConfirmPassword
-                          ? 'Hide confirmation password'
-                          : 'Show confirmation password'
+                          ? 'Ocultar confirmação da senha'
+                          : 'Mostrar confirmação da senha'
                       }
                       aria-pressed={showConfirmPassword}
                       disabled={isSubmitting || missingToken}
@@ -359,10 +359,10 @@ function ResetPassword() {
                         className="reset-spinner"
                         aria-hidden="true"
                       />
-                      Resetting password…
+                      Redefinindo senha…
                     </>
                   ) : (
-                    'Reset password'
+                    'Redefinir senha'
                   )}
                 </button>
               </form>
@@ -372,7 +372,7 @@ function ResetPassword() {
                 href={ECONVA_LOGIN_DEEP_LINK}
               >
                 <ArrowLeft size={16} aria-hidden="true" />
-                Back to login
+                Voltar ao login
               </a>
             </>
           )}

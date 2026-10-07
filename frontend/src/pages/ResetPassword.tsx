@@ -99,7 +99,7 @@ function ResetPassword() {
    * Hand the flow back to the native app once the password has changed.
    * This only opens the app at its login screen — it does not authenticate
    * the user. When the app is not installed the deep link is a no-op and
-   * the page stays put, leaving the manual "Open Econva app" button as
+   * the page stays put, leaving the manual "Open Econva" button as
    * the fallback.
    */
   useEffect(() => {
@@ -199,7 +199,7 @@ function ResetPassword() {
                 href={ECONVA_LOGIN_DEEP_LINK}
               >
                 <Smartphone size={18} aria-hidden="true" />
-                Open Econva app
+                Open Econva
               </a>
 
               <p className="reset-redirect-hint">

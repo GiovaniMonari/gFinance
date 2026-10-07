@@ -37,6 +37,6 @@ export const ECONVA_LOGIN_DEEP_LINK =
 /**
  * Delay before the success screen attempts to hand off to the app.
  * The page stays put when the app is not installed, so the manual
- * "Open Econva app" button remains available as the fallback.
+ * "Open Econva" button remains available as the fallback.
  */
 export const ECONVA_LOGIN_REDIRECT_DELAY_MS = 1500

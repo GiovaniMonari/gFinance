@@ -11,6 +11,7 @@ import {
   Zap,
 } from 'lucide-react'
 import './App.css'
+import ResetPassword from './pages/ResetPassword'
 
 const features = [
   {
@@ -67,6 +68,13 @@ const expenseBars = [
 ]
 
 function App() {
+  if (
+    typeof window !== 'undefined' &&
+    window.location.pathname === '/reset-password'
+  ) {
+    return <ResetPassword />
+  }
+
   return (
     <main>
       {/* =====================================================

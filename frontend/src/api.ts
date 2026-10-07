@@ -157,6 +157,9 @@ export const api = {
   register: (email: string, password: string) =>
     request<{ access_token: string }>('/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) }),
 
+  resetPassword: (data: { token: string; newPassword: string; confirmPassword: string }) =>
+    request<void>('/auth/reset-password', { method: 'POST', body: JSON.stringify(data) }),
+
   finance: () => request<finance | null>('/finances/get', { method: 'POST' }),
 
   createfinance: () => request<finance>('/finances', { method: 'POST' }),

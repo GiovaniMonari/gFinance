@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import {
   AlertCircle,
@@ -8,8 +8,13 @@ import {
   EyeOff,
   Loader2,
   Lock,
+  Smartphone,
 } from 'lucide-react'
 import { api } from '../api'
+import {
+  ECONVA_LOGIN_DEEP_LINK,
+  ECONVA_LOGIN_REDIRECT_DELAY_MS,
+} from '../config/mobileApp'
 import './ResetPassword.css'
 
 const EXPIRED_LINK_MESSAGE =
@@ -86,8 +91,29 @@ function ResetPassword() {
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const redirectTimer = useRef<number | null>(null)
 
   const missingToken = token.length === 0
+
+  /**
+   * Hand the flow back to the native app once the password has changed.
+   * This only opens the app at its login screen — it does not authenticate
+   * the user. When the app is not installed the deep link is a no-op and
+   * the page stays put, leaving the manual "Open Econva app" button as
+   * the fallback.
+   */
+  useEffect(() => {
+    if (!isSuccess) return
+    redirectTimer.current = window.setTimeout(() => {
+      window.location.href = ECONVA_LOGIN_DEEP_LINK
+    }, ECONVA_LOGIN_REDIRECT_DELAY_MS)
+    return () => {
+      if (redirectTimer.current !== null) {
+        window.clearTimeout(redirectTimer.current)
+        redirectTimer.current = null
+      }
+    }
+  }, [isSuccess])
 
   function validate(): FieldErrors {
     const errors: FieldErrors = {}
@@ -164,13 +190,22 @@ function ResetPassword() {
               <h1>Password reset successfully</h1>
 
               <p>
-                Your password has been changed. You can now sign in with your
-                new password.
+                Your password has been changed. You can now sign in with
+                your new password in the Econva app.
               </p>
 
-              <a className="primary-button reset-submit" href="/">
-                Go to login
+              <a
+                className="primary-button reset-submit"
+                href={ECONVA_LOGIN_DEEP_LINK}
+              >
+                <Smartphone size={18} aria-hidden="true" />
+                Open Econva app
               </a>
+
+              <p className="reset-redirect-hint">
+                Opening the Econva app to the login screen. If it does not
+                open automatically, tap the button above.
+              </p>
             </section>
           ) : (
             <>
@@ -332,7 +367,10 @@ function ResetPassword() {
                 </button>
               </form>
 
-              <a className="reset-back-link" href="/">
+              <a
+                className="reset-back-link"
+                href={ECONVA_LOGIN_DEEP_LINK}
+              >
                 <ArrowLeft size={16} aria-hidden="true" />
                 Back to login
               </a>

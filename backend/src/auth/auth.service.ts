@@ -138,4 +138,16 @@ export class AuthService {
 
     return this.generateToken(user.id);
   }
+
+  async validateUser(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
+
+    return user;
+  }
 }

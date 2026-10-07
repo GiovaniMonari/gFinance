@@ -7,6 +7,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from '../prisma/prisma.module';
+import { PasswordResetService } from './password-reset.service';
+import { RedisService } from 'src/redis/redis.service';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
@@ -24,10 +27,15 @@ import { PrismaModule } from '../prisma/prisma.module';
     AuthService,
     JwtStrategy,
     JwtAuthGuard,
+    PasswordResetService,
+    RedisService,
+    EmailService,
   ],
   exports: [
     AuthService,
     JwtAuthGuard,
+    PasswordResetService,
+    RedisService,
   ],
 })
 export class AuthModule {}

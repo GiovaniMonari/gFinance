@@ -130,4 +130,25 @@ export class EmailService {
       `,
     });
   }
+
+  async sendResetPasswordEmail(to: string, token: string) {
+    const resetLink = `https://econva.vercel.app/reset-password?token=${token}`;
+    await this.resend.emails.send({
+      from: 'Econva <onboarding@resend.dev>',
+      to,
+      subject: 'Redefinição de Senha',
+      html: `
+        <html>
+          <body>
+            <p>Olá,</p>
+            <p>Você solicitou a redefinição de sua senha. Clique no botão abaixo para definir uma nova senha:</p>
+            <a href="${resetLink}" target="_blank" style="display: inline-block; width: 100%; box-sizing: border-box; background-color: #10B981; color: #0F172A; text-decoration: none; text-align: center; font-weight: 700; font-size: 14px; padding: 14px 24px; border-radius: 8px; transition: background-color 0.2s;">
+              Redefinir Senha
+            </a>
+            <p>Se você não solicitou a redefinição de senha, por favor, ignore este e-mail.</p>
+          </body>
+        </html>
+      `,
+    });
+  }
 }
